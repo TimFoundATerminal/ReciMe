@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 import { Button, SafeAreaView, Text, Dimensions, View, Pressable, StatusBar, Platform } from "react-native";
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import tw from 'twrnc';
@@ -10,12 +11,40 @@ export default function Impact() {
   let monthData = [12, 17, 8, 14];
   let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
 
+  function createGraphObj(labels, data) {
+    return (
+      {
+        labels: labels, 
+        datasets: [
+          {data: data}
+        ]
+      }
+    );
+  }
+
+  let numberOfWeeksAgo = 0;
+  let numberOfMonthsAgo = 0;
+
+  // function getWeekDays(numberOfWeeksAgo) {
+  //   let weekDays = new Array(7);
+  //   for (let i = 0; i < 7; i++) {
+  //     weekDays[i] = moment().subtract(i, 'days').format('ddd');
+  //   }
+  //   return {
+  //     startDate: moment().subtract((numberOfWeeksAgo * 7), 'days').format('ll'), 
+  //     endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('ll'), 
+  //     week: weekDays
+  //   };
+  // }
+
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
 
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
-  const [graphObj, updateGraph] = useState({labels: weekLabels, datasets: [{data: weekData}]});
+  const [graphObj, updateGraph] = useState(createGraphObj(weekLabels, weekData));
+  // const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate)
+  // const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate)
 
   let pressedView = 0;
 
@@ -24,6 +53,7 @@ export default function Impact() {
     backgroundGradientFrom: '#1c521b',
     backgroundGradientTo: '#29e329',
     decimalPlaces: 1, // optional, defaults to 2dp
+    strokeWidth: 10,
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   }
   const graphStyle={
@@ -37,7 +67,7 @@ export default function Impact() {
     pressedView = 0;
     setWeekViewColor(switchActiveColor);
     setMonthViewColor(switchInactiveColor);
-    updateGraph({labels: weekLabels, datasets: [{data: weekData}]})
+    updateGraph(createGraphObj(weekLabels, weekData))
     console.log(pressedView);
   }
 
@@ -46,7 +76,7 @@ export default function Impact() {
     pressedView = 1;
     setWeekViewColor(switchInactiveColor);
     setMonthViewColor(switchActiveColor);
-    updateGraph({labels: monthLabels, datasets: [{data: monthData}]})
+    updateGraph(createGraphObj(monthLabels, monthData))
     console.log(pressedView);
   }
 
@@ -55,6 +85,7 @@ export default function Impact() {
       {/* Creates a basic line graph in react native */}
       <View>
         <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Carbon Footprint</Text>
+        <Text style={tw`bg-white`}>{}</Text>
       </View>
       <View style={tw`p-4 android:pt-2 bg-white dark:bg-black`}>
       <BarChart
@@ -90,3 +121,38 @@ export default function Impact() {
     </SafeAreaView>
   );
 }
+
+
+// function formatWeekDays(weekDays) {
+//   let arrayLength = weekDays.length;
+//   for (let i = 0; i < arrayLength; i++) {
+//     const element = array[i];
+//     switch (element) {
+//       case "Monday":
+//         array[i] = "Mon";
+//         break;
+//       case "Tuesday":
+//         array[i] = "Tue";
+//         break;
+//       case "Wednesday":
+//         array[i] = "Wed";
+//         break;
+//       case "Thursday":
+//         array[i] = "Thu";
+//         break;
+//       case "Friday":
+//         array[i] = "Fri";
+//         break;
+//       case "Saturday":
+//         array[i] = "Sat";
+//         break;
+//       case "Sunday":
+//         array[i] = "Sun";
+//         break;
+    
+//       default:
+//         console.log("Error")
+//         break;
+//     }
+//   }
+// }
