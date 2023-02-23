@@ -25,17 +25,17 @@ export default function Impact() {
   let numberOfWeeksAgo = 0;
   let numberOfMonthsAgo = 0;
 
-  // function getWeekDays(numberOfWeeksAgo) {
-  //   let weekDays = new Array(7);
-  //   for (let i = 0; i < 7; i++) {
-  //     weekDays[i] = moment().subtract(i, 'days').format('ddd');
-  //   }
-  //   return {
-  //     startDate: moment().subtract((numberOfWeeksAgo * 7), 'days').format('ll'), 
-  //     endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('ll'), 
-  //     week: weekDays
-  //   };
-  // }
+  function getWeekDays(numberOfWeeksAgo) {
+    let weekDays = new Array(7);
+    for (let i = 0; i < 7; i++) {
+      weekDays[i] = moment().subtract(i, 'days').format('ddd');
+    }
+    return {
+      startDate: moment().subtract((numberOfWeeksAgo * 7) + 6, 'days').format('L'), 
+      endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('L'), 
+      week: weekDays
+    };
+  }
 
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
@@ -43,8 +43,8 @@ export default function Impact() {
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
   const [graphObj, updateGraph] = useState(createGraphObj(weekLabels, weekData));
-  // const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate)
-  // const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate)
+  const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate);
+  const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate);
 
   let pressedView = 0;
 
@@ -58,7 +58,7 @@ export default function Impact() {
   }
   const graphStyle={
     marginVertical: 4,
-    borderRadius: 16,
+    borderRadius: 8,
     paddingTop: Platform.OS === "android" ? StatusBar.height : 0,
   }
 
@@ -85,39 +85,57 @@ export default function Impact() {
       {/* Creates a basic line graph in react native */}
       <View>
         <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Carbon Footprint</Text>
-        <Text style={tw`bg-white`}>{}</Text>
+        <Text style={tw`bg-white pl-3 pr-3, pt-1`}>{weekStartDate} - {weekEndDate}</Text>
       </View>
-      <View style={tw`p-4 android:pt-2 bg-white dark:bg-black`}>
+      <View style={tw`p-3 android:pt-2 bg-white dark:bg-black`}>
       <BarChart
           style={graphStyle}
           data={graphObj}
-          width={screenWidth*0.9}
+          width={screenWidth*0.92}
           height={220}
           yAxisSuffix={"kg"}
           chartConfig={chartConfig}
       />
       </View>
-      <View style={tw`flex-row w-full justify-center bg-white pb-3 pl-3 pr-3`}>
+      <View style={tw`bg-white pb-3 flex flex-row`}>
+        {/* Box 1 */}
+        <View style={tw`bg-white basis-1/3 flex-row justify-center`}>
+          <Pressable
+              onPress={() => console.log("Previous")}
+            >
+            <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center`}>
+              <Text style={tw`text-center`}>Previous</Text>
+            </View>
+          </Pressable>
+        </View>
+         {/* Box 2 */}
+        <View style={tw`bg-white basis-1/3 flex-row justify-center`}>
+          <Pressable
+            onPress={weekClickHandler}
+          >
+            <View style={tw`p-2 flex ${weekViewColor} rounded-l-lg w-15`}>
+              <Text style={tw`text-center`}>Week</Text>
+            </View>
+          </Pressable>
+          <Pressable
+            onPress={monthClickHandler}
+          >
+            <View style={tw`p-2 flex ${monthViewColor} rounded-r-lg w-15`}>
+              <Text style={tw`text-center`}>Month</Text>
+            </View>
+          </Pressable>
+        </View>
+         {/* Box 3 */}
+        <View style={tw`bg-white basis-1/3 flex-row justify-center`}>
         <Pressable
-          onPress={weekClickHandler}
-        >
-          <View style={tw`p-4 flex ${weekViewColor} rounded-l-lg w-25`}>
-            <Text style={tw`text-center`}>Week</Text>
-          </View>
-        </Pressable>
-        <Pressable
-          onPress={monthClickHandler}
-        >
-          <View style={tw`p-4 flex ${monthViewColor} rounded-r-lg w-25`}>
-            <Text style={tw`text-center`}>Month</Text>
-          </View>
-        </Pressable>
+              onPress={() => console.log("Previous")}
+            >
+            <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center`}>
+              <Text style={tw`text-center`}>Next</Text>
+            </View>
+          </Pressable>
+        </View>
       </View>
-      {/* <View style={tw`bg-violet-200 flex-1 flex-row`}>
-        <View style={tw`bg-orange-400 basis-1/3`}><Text>Month</Text></View>
-        <View style={tw`bg-yellow-400 basis-1/3`}><Text>Month</Text></View>
-        <View style={tw`bg-emerald-400 basis-1/3`}><Text>Month</Text></View>
-      </View> */}
     </SafeAreaView>
   );
 }
