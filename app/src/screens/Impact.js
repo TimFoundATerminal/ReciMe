@@ -25,6 +25,28 @@ export default function Impact() {
   let numberOfWeeksAgo = 0;
   let numberOfMonthsAgo = 0;
 
+  function getNextWeekColor() {
+    if (numberOfWeeksAgo == 0) { 
+      return switchInactiveColor;
+    } else {
+      return switchActiveColor;
+    }
+  }
+
+  const previousWeek = () => {
+    numberOfWeeksAgo++;
+    console.log(numberOfWeeksAgo)
+  }
+
+  const nextWeek = () => {
+    if (numberOfWeeksAgo <= 0) {
+      return;
+    }
+
+    numberOfWeeksAgo--;
+    console.log(numberOfWeeksAgo)
+  }
+
   function getWeekDays(numberOfWeeksAgo) {
     let weekDays = new Array(7);
     for (let i = 0; i < 7; i++) {
@@ -101,7 +123,7 @@ export default function Impact() {
         {/* Box 1 */}
         <View style={tw`bg-white basis-1/3 flex-row justify-center`}>
           <Pressable
-              onPress={() => console.log("Previous")}
+              onPress={previousWeek}
             >
             <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center`}>
               <Text style={tw`text-center`}>Previous</Text>
@@ -128,9 +150,9 @@ export default function Impact() {
          {/* Box 3 */}
         <View style={tw`bg-white basis-1/3 flex-row justify-center`}>
         <Pressable
-              onPress={() => console.log("Previous")}
+              onPress={nextWeek}
             >
-            <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center`}>
+            <View style={tw`p-2 ${getNextWeekColor()} rounded-lg w-20 justify-center`}>
               <Text style={tw`text-center`}>Next</Text>
             </View>
           </Pressable>
