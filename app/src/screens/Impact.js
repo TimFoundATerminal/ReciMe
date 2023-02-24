@@ -6,10 +6,26 @@ import tw from 'twrnc';
 
 export default function Impact() {
   const screenWidth = Dimensions.get('window').width;
+
   let weekData = [12, 17, 8, 14, 21, 3, 15];
   let weekLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   let monthData = [12, 17, 8, 14];
   let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
+  
+  let pressedView = 0;
+
+  // let numberOfWeeksAgo = 0;
+
+  const switchActiveColor = "bg-green-700";
+  const switchInactiveColor = "bg-zinc-300";
+
+  const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
+  const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
+  const [graphObj, updateGraph] = useState(createGraphObj(weekLabels, weekData));
+  const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate);
+  const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate);
+  const [nextWeekColor, updateWeekColor] = useState(getNextWeekColor(numberOfWeeksAgo));
+  const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
 
   function createGraphObj(labels, data) {
     return (
@@ -22,11 +38,8 @@ export default function Impact() {
     );
   }
 
-  let numberOfWeeksAgo = 0;
-  let numberOfMonthsAgo = 0;
-
-  function getNextWeekColor() {
-    if (numberOfWeeksAgo == 0) { 
+  function getNextWeekColor(numWeeks) {
+    if (numWeeks == 0) { 
       return switchInactiveColor;
     } else {
       return switchActiveColor;
@@ -34,17 +47,24 @@ export default function Impact() {
   }
 
   const previousWeek = () => {
-    numberOfWeeksAgo++;
-    console.log(numberOfWeeksAgo)
+    const update = numberOfWeeksAgo + 1; 
+    setNumberOfWeeksAgo(update);
+    updateWeekColor(getNextWeekColor(update));
+    const dateObj = getWeekDays(update);
+    updateWeekStartDate(dateObj.startDate);
+    updateWeekendDate(dateObj.endDate);
+    console.log(update);
   }
 
   const nextWeek = () => {
-    if (numberOfWeeksAgo <= 0) {
-      return;
-    }
-
-    numberOfWeeksAgo--;
-    console.log(numberOfWeeksAgo)
+    if (numberOfWeeksAgo <= 0) { return; }
+    const update = numberOfWeeksAgo - 1; 
+    setNumberOfWeeksAgo(update);
+    updateWeekColor(getNextWeekColor(update));
+    const dateObj = getWeekDays(update);
+    updateWeekStartDate(dateObj.startDate);
+    updateWeekendDate(dateObj.endDate);
+    console.log(update);
   }
 
   function getWeekDays(numberOfWeeksAgo) {
@@ -58,17 +78,6 @@ export default function Impact() {
       week: weekDays
     };
   }
-
-  const switchActiveColor = "bg-green-700";
-  const switchInactiveColor = "bg-zinc-300";
-
-  const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
-  const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
-  const [graphObj, updateGraph] = useState(createGraphObj(weekLabels, weekData));
-  const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate);
-  const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate);
-
-  let pressedView = 0;
 
   const chartConfig={
     backgroundColor: '#0d7529',
@@ -152,7 +161,7 @@ export default function Impact() {
         <Pressable
               onPress={nextWeek}
             >
-            <View style={tw`p-2 ${getNextWeekColor()} rounded-lg w-20 justify-center`}>
+            <View style={tw`p-2 ${nextWeekColor} rounded-lg w-20 justify-center`}>
               <Text style={tw`text-center`}>Next</Text>
             </View>
           </Pressable>
