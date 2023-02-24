@@ -1,29 +1,42 @@
-# README #
+# README
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Please see the Jira Sprint board for the current tasks that need to be completed. If you start one you need to make sure you are on a different branch before making any changes
+to the code.
 
-### What is this repository for? ###
+Please see the link below to learn git and how branches work:
+https://www.youtube.com/watch?v=e2IbNHi4uCI
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Please follow Evan's tasks and development plan on the following link:
+<span style="color:red">
+Please make sure that you claim your jobs on the Jira Issues:
+https://mattsnell.atlassian.net/jira/software/projects/ES/boards/2
+</span>
 
-### How do I get set up? ###
+Link to the repo can be found here:
+https://bitbucket.org/mattsnell-admin/experimental-systems/src/main/
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### What is this repository for?
 
-### Contribution guidelines ###
+- Quick summary
+- Version
+- [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
-* Writing tests
-* Code review
-* Other guidelines
+### How do I get set up?
 
-### Who do I talk to? ###
+- Summary of set up
+- Configuration
+- Dependencies
+- Database configuration
+- How to run tests
+- Deployment instructions
 
-* Repo owner or admin
-* Other community or team contact
+### Contribution guidelines
+
+- Writing tests
+- Code review
+- Other guidelines
+
+### Who do I talk to?
+
+- Repo owner or admin
+- Other community or team contact
