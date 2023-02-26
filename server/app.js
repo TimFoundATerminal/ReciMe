@@ -13,13 +13,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 const app = express();
-const api = require('./routes')
+const api = require('./routes');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use('/api', api)
+app.use('/api', api);
 
 app.use(function(req, res) {
     res.status(404).send({message: 'Resource not found'});
