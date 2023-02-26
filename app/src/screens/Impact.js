@@ -11,21 +11,23 @@ export default function Impact() {
   let weekLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   let monthData = [12, 17, 8, 14];
   let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
+  let weekObj = getWeekDays(0);
   
   let pressedView = 0;
-
+  
   // let numberOfWeeksAgo = 0;
-
+  
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
-
+  
+  const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
-  const [graphObj, updateGraph] = useState(createGraphObj(weekLabels, weekData));
-  const [weekStartDate, updateWeekStartDate] = useState(getWeekDays(numberOfWeeksAgo).startDate);
-  const [weekEndDate, updateWeekendDate] = useState(getWeekDays(numberOfWeeksAgo).endDate);
-  const [nextWeekColor, updateWeekColor] = useState(getNextWeekColor(numberOfWeeksAgo));
-  const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
+  const [graphObj, updateGraph] = useState(createGraphObj(weekObj.week, weekData));
+  const [weekStartDate, updateWeekStartDate] = useState(weekObj.startDate);
+  const [weekEndDate, updateWeekendDate] = useState(weekObj.endDate);
+  const [nextWeekColor, updateWeekColor] = useState(switchInactiveColor);
+  const [weekButtonsShow, setWeekButtonsVisability] = useState("");
 
   function createGraphObj(labels, data) {
     return (
@@ -51,6 +53,7 @@ export default function Impact() {
     setNumberOfWeeksAgo(update);
     updateWeekColor(getNextWeekColor(update));
     const dateObj = getWeekDays(update);
+    updateGraph(createGraphObj(dateObj.week, weekData));
     updateWeekStartDate(dateObj.startDate);
     updateWeekendDate(dateObj.endDate);
     console.log(update);
@@ -62,6 +65,7 @@ export default function Impact() {
     setNumberOfWeeksAgo(update);
     updateWeekColor(getNextWeekColor(update));
     const dateObj = getWeekDays(update);
+    updateGraph(createGraphObj(dateObj.week, weekData));
     updateWeekStartDate(dateObj.startDate);
     updateWeekendDate(dateObj.endDate);
     console.log(update);
@@ -98,6 +102,7 @@ export default function Impact() {
     pressedView = 0;
     setWeekViewColor(switchActiveColor);
     setMonthViewColor(switchInactiveColor);
+    setWeekButtonsVisability("");
     updateGraph(createGraphObj(weekLabels, weekData))
     console.log(pressedView);
   }
@@ -107,6 +112,7 @@ export default function Impact() {
     pressedView = 1;
     setWeekViewColor(switchInactiveColor);
     setMonthViewColor(switchActiveColor);
+    setWeekButtonsVisability("hidden");
     updateGraph(createGraphObj(monthLabels, monthData))
     console.log(pressedView);
   }
@@ -134,7 +140,7 @@ export default function Impact() {
           <Pressable
               onPress={previousWeek}
             >
-            <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center`}>
+            <View style={tw`p-2 ${switchActiveColor} rounded-lg w-20 justify-center ${weekButtonsShow}`}>
               <Text style={tw`text-center`}>Previous</Text>
             </View>
           </Pressable>
@@ -161,7 +167,7 @@ export default function Impact() {
         <Pressable
               onPress={nextWeek}
             >
-            <View style={tw`p-2 ${nextWeekColor} rounded-lg w-20 justify-center`}>
+            <View style={tw`p-2 ${nextWeekColor} rounded-lg w-20 justify-center ${weekButtonsShow}`}>
               <Text style={tw`text-center`}>Next</Text>
             </View>
           </Pressable>
