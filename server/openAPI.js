@@ -40,13 +40,9 @@ const swaggerDefinition = {
               type: 'float',
               example: 100.0
             },
-            dateAdded: {
-              type: 'string',
-              example: '2023-02-24'
-            },
             dateExpiry: {
-              type: 'string',
-              example: '2023-02-24'
+              type: 'integer',
+              example: 20230224
             },
             frozen: {
               type: 'int',
@@ -64,13 +60,9 @@ const swaggerDefinition = {
               type: 'float',
               example: 100.0
             },
-            dateAdded: {
-              type: 'string',
-              example: '2023-02-24'
-            },
             dateExpiry: {
-              type: 'string',
-              example: '2023-02-24'
+              type: 'integer',
+              example: 20230224
             },
             frozen: {
               type: 'int',
@@ -93,8 +85,8 @@ const swaggerDefinition = {
               example: 'grams'
             },
             carbonPerUnit: {
-              type: 'integer',
-              example: 20
+              type: 'float',
+              example: 20.0
             },
           }
         },
@@ -110,8 +102,8 @@ const swaggerDefinition = {
               example: 'grams'
             },
             carbonPerUnit: {
-              type: 'integer',
-              example: 20
+              type: 'float',
+              example: 20.0
             },
           }
         },
@@ -119,14 +111,14 @@ const swaggerDefinition = {
           type: 'object',
           properties: {
             wasteID: {
-              type: 'string'
+              type: 'integer'
             },
             ingredientID: {
-              type: 'string'
+              type: 'integer'
             },
             dateThrownAway: {
-              type: 'string',
-              example: '2023-02-26'
+              type: 'integer',
+              example: 20230226
             },
             quantity: {
               type: 'float',
@@ -138,11 +130,11 @@ const swaggerDefinition = {
           type: 'object',
           properties: {
             ingredientID: {
-              type: 'string'
+              type: 'integer'
             },
             dateThrownAway: {
-              type: 'string',
-              example: '2023-02-26'
+              type: 'integer',
+              example: 20230226
             },
             quantity: {
               type: 'float',

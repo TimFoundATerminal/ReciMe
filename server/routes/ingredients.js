@@ -86,7 +86,7 @@ router.get('/:ingredientID', param('ingredientID').isInt(),handleValidator, func
 router.post('/', 
 body('name').isString().exists(),
 body('standardUnit').isString().exists(),
-body('carbonPerUnit').isInt().exists(),
+body('carbonPerUnit').isFloat().exists(),
 handleValidator,
 function(req, res, next) {
     try {

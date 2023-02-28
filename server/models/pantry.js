@@ -1,7 +1,11 @@
 const db = require('./db');
 
 function getAll() {
-    const data = db.query('SELECT * FROM pantry', []);
+    const data = db.query(
+        'SELECT * \
+        FROM pantry\
+        INNER JOIN ingredients on ingredients.ingredientID = pantry.ingredientID', 
+    []);
     return data
 }
 
@@ -12,8 +16,8 @@ function getItem(id) {
 
 function createItem(pantryObj) {
     const result = db.run(
-        'INSERT INTO pantry (ingredientID, quantity, dateAdded, dateExpiry, frozen) \
-         VALUES (@ingredientID, @quantity, @dateAdded, @dateExpiry, @frozen)', pantryObj);        
+        'INSERT INTO pantry (ingredientID, quantity, dateExpiry, frozen) \
+         VALUES (@ingredientID, @quantity, @dateExpiry, @frozen)', pantryObj);        
     return {message:db.validateChanges(result, 'Pantry item created successfully', 'Error in creating pantry item')};
 }
 

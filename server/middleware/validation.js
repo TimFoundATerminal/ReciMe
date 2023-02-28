@@ -10,5 +10,4 @@ function handleValidator(req, res, next) {
 
 module.exports = {
     handleValidator,
-    validateDbOperation
 }
