@@ -1,13 +1,4 @@
-// import React from "react";
-// import { Text } from "react-native";
-
-// export default function Pantry() {
-//   return <Text>Test Content</Text>;
-// }
-
-import React from 'react';
-
-import { StatusBar } from 'expo-status-bar';
+import React from "react";
 import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 
@@ -18,18 +9,37 @@ import {createStackNavigator} from '@react-navigation/stack';
 // MAIN PAGE
 const Main = (props) => {
 
-  // LIST FOODS IN PANTRY
-  // let foodListView = (item) => {
-  //   <View key={item.FOODVAR} style={{ backgroundColor: "#98DC14", padding: 20, margin: 20 }}>
-  //     <Text>{item.QUANTITYVAR} {item.FOODVAR}</Text>
-  //   </View>
-  // }
-
   // VARIABLES TO STORE PANTRY DATA
   let [flatListItems, setFlatListItems] = React.useState([]);
 
+  // VARIABLES FOR ADDING FOOD TO PANTRY (passed from pantry upon entry)
+  //let { selected, quantity, metric, day, month, year } = route.params;
+
   // FOR LOOP TO GET ALL FOOD ITEMS IN PANTRY
-  // code here
+  // useEffect(() => {
+  //   db.transaction((tx) => {
+  //     tx.executeSql (
+  //       'line here',
+  //       [],
+  //       (tx, results) => {
+  //         var temp = [];
+  //         for (let i = 0; i < results.row.length; ++i)
+  //           temp.push(results.rows.item(i));
+  //         setFlatListItems(temp);
+  //       }
+  //     )
+  //   })
+  // })
+
+  let listItemView = (item) => {
+    return (
+      <View
+        // key={selected} <-- set as the food ID
+        style={{ backgroundColor: "#98DC14", padding: 20 }}>
+        {/* <Text>{item.quantity} {item.FOOD}</Text> <-- LIST VIEW GOES HERE */}
+      </View>
+    )
+  };
 
   // NAVIGATION FUNCTIONS
   const onPressChoose = () => {
@@ -40,11 +50,13 @@ const Main = (props) => {
     <View style={{ paddingHorizontal: 20, flex: 1, alignItems: 'center' }}>
      
       <View style={{ flexDirection: "row" }}>
+
         <Text style={{ marginTop: 51, marginRight: 6, fontSize: 27, fontWeight: 600 }}>Pantry</Text>
         {/* NAVIGATION BUTTONS */}
         <Pressable onPress={onPressChoose} style={styles.pantryButton}>
           <Text style={{ fontSize: 15, color: 'white' }}>Add Food</Text>
         </Pressable>
+
       </View>
 
       <View
@@ -56,12 +68,14 @@ const Main = (props) => {
         }}
       />
 
-      {/* FOOD LIST
-      <FlatList
-        data={flatListItems}
-        keyExtractor={(item, index) => index.toString()} // Extracts a unique key for a given item at specified index
-        renderItem={({ item }) => foodListView(item)}
-      /> */}
+      {/* LIST VIEW FOR FOODS
+      <View style={{ flex: 1 }}>
+        <FlatList
+          data={flatListItems}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => listItemView(item)}
+        />
+      </View> */}
 
     </View>
   )
@@ -154,7 +168,15 @@ const AddFood = (props) => {
         "Food entered successfully"
       );
 
-      // ADD TO DATABASE
+      // FOOD DATA PASSED TO MAIN SCREEN
+      // props.navigation.navigate("Main", {
+      //   selected,
+      //   quantity,
+      //   metric,
+      //   day,
+      //   month,
+      //   year
+      // });
 
     } else {
 
@@ -178,7 +200,6 @@ const AddFood = (props) => {
         dropdownTextStyles={{color:'black'}}
         searchPlaceholder="Enter item"
         placeholder="Enter item"
-        inputStyles={{color:'darkgrey'}}
         maxHeight={100}
       />
 
@@ -200,7 +221,6 @@ const AddFood = (props) => {
           dropdownTextStyles={{ color:'black' }}
           searchPlaceholder="(ml, g, etc.)"
           placeholder="Enter metric"
-          inputStyles={{color:'darkgrey'}}
           maxHeight={100}
         />
       </View>
