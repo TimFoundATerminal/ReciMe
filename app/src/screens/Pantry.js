@@ -1,16 +1,83 @@
-import React from "react";
-import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList } from 'react-native';
+import React, { Component } from "react";
+import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 
 //Navigation import
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
+// GET API CONTAINER
+class GetAPIContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        loading: false,
+        dataSource: [],
+    };
+  }
+
+  // HTTPS REQUEST (FETCH)
+  goForFetch = () => {
+      this.setState({
+          loading: true,
+
+      })
+      fetch('http://localhost:3000/api/pantry', {
+        method: 'GET'
+      })
+      .then(response => response.json())
+      .then((responseJson) => {
+          console.log('getting data from fetch', responseJson)
+          this.setState({
+              loading: false,
+              dataSource: responseJson
+          })
+      })
+      .catch(error => console.log(error))
+  }
+
+  // FLATLIST SEPARATOR
+  FlatListSeparator = () => {
+      return (
+          <View style={{
+              height: .5,
+              width: "100%",
+              backgroundColor: "rgba(0,0,0,0.5)",
+          }}
+          />
+      );
+  }
+
+  // UI COMPONENT FOR EACH FOOD ITEM
+  renderItem = (data) => {
+      return (
+          <TouchableOpacity style={styles.list}>
+              <Text style={styles.lightText}>{data.item.ingredientID}</Text>
+              <Text style={styles.lightText}>{data.item.quantity}</Text>
+              <Text style={styles.lightText}>{data.item.dateExpiry}</Text></TouchableOpacity>
+      )
+  }
+
+  // RENDER / CREATE COMPONENT
+  render() {
+    const { dataSource, loading } = this.state
+    return (
+        <ApiView
+            goForFetch={this.goForFetch}
+            dataSource={dataSource}
+            loading={loading}
+            FlatListSeparator={this.FlatListSeparator}
+            renderItem={this.renderItem}
+        />
+    );
+}
+}
+
 // MAIN PAGE
 const Main = (props) => {
 
-  // VARIABLES TO STORE PANTRY DATA
-  let [flatListItems, setFlatListItems] = React.useState([]);
+  // VARIABLES FROM APICONTAINER
+  const { goForFetch, renderItem, FlatListItemSeparator, dataSource, loading } = props
 
   // VARIABLES FOR ADDING FOOD TO PANTRY (passed from pantry upon entry)
   //let { selected, quantity, metric, day, month, year } = route.params;
@@ -31,15 +98,15 @@ const Main = (props) => {
   //   })
   // })
 
-  let listItemView = (item) => {
-    return (
-      <View
-        // key={selected} <-- set as the food ID
-        style={{ backgroundColor: "#98DC14", padding: 20 }}>
-        {/* <Text>{item.quantity} {item.FOOD}</Text> <-- LIST VIEW GOES HERE */}
-      </View>
-    )
-  };
+  // let listItemView = (item) => {
+  //   return (
+  //     <View
+  //       // key={selected} <-- set as the food ID
+  //       style={{ backgroundColor: "#98DC14", padding: 20 }}>
+  //       {/* <Text>{item.quantity} {item.FOOD}</Text> <-- LIST VIEW GOES HERE */}
+  //     </View>
+  //   )
+  // };
 
   // NAVIGATION FUNCTIONS
   const onPressChoose = () => {
@@ -68,14 +135,27 @@ const Main = (props) => {
         }}
       />
 
-      {/* LIST VIEW FOR FOODS
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={flatListItems}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => listItemView(item)}
-        />
-      </View> */}
+      <View style={{ margin: 18 }}>
+          <Pressable onPress={goForFetch} color='#056835' style={styles.button}>
+            <Text>Click to use Fetch</Text>
+          </Pressable>
+      </View>
+
+      {/* LIST FOR FOOD ITEMS */}
+      <FlatList
+          data={dataSource}
+          ItemSeparatorComponent={FlatListItemSeparator}
+          renderItem={item => renderItem(item)}
+          keyExtractor={item => item.ingredientID.toString()}
+      />
+
+      {/* LOADING UI WHILST FETCHING */}
+      {loading &&
+          <View style={styles.loader}>
+              <ActivityIndicator size="large" color="#0c9" />
+              <Text>Fetching Data</Text>
+          </View>
+      }
 
     </View>
   )
@@ -120,16 +200,16 @@ const BarcodeOrManual = (props) => {
 const AddFood = (props) => {
 
   // DROPDOWN MENU CONST
-  const [selected, setSelected] = React.useState("");
+  const [getSelected, setSelected] = React.useState("");
 
   // QUANTITY CONST
-  const [quantity, setQuantity] = React.useState("");
-  const [metric, setMetric] = React.useState("");
+  const [getQuantity, setQuantity] = React.useState("");
+  const [getMetric, setMetric] = React.useState("");
 
   // DATE CONST
-  const [day, setDay] = React.useState("");
-  const [month, setMonth] = React.useState("");
-  const [year, setYear] = React.useState("");
+  const [getDay, setDay] = React.useState("");
+  const [getMonth, setMonth] = React.useState("");
+  const [getYear, setYear] = React.useState("");
 
   // DROPDOWN MENU DATA
   const data = [
@@ -160,23 +240,36 @@ const AddFood = (props) => {
     props.navigation.navigate('BarcodeOrManual');
   }
 
+  // ASYNC COMPONENT TO POST DATA TO API
+  async function storeData() {
+    try {
+      await fetch('http://localhost:3000/api/pantry', {
+        method: 'POST',
+        headers: {
+          'Accept': '*/*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ingredientID: {getSelected},
+          quantity: {getQuantity}, // ADD GETMETRIC
+          dateExpiry: {getDay}, // ADD GETMONTH AND GETYEAR
+          frozen: ''
+        })
+      })
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   // VALIDATION AND PASS DATA TO DATABASE
   const showAlert = () => {
-    if (selected && quantity && metric && day && month && year) {
+    if (getSelected && getQuantity && getMetric && getDay && getMonth && getYear) {
 
       Alert.alert (
         "Food entered successfully"
       );
 
-      // FOOD DATA PASSED TO MAIN SCREEN
-      // props.navigation.navigate("Main", {
-      //   selected,
-      //   quantity,
-      //   metric,
-      //   day,
-      //   month,
-      //   year
-      // });
+      storeData();
 
     } else {
 
@@ -209,7 +302,7 @@ const AddFood = (props) => {
         <TextInput
           style={styles.input}
           onChangeText={setQuantity}
-          value={quantity}
+          value={getQuantity}
           keyboardType="numeric"
         />
         <SelectList
