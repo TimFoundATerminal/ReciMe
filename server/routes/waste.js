@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const wasteModel = require('../models/waste')
 const {param, body, validationResult} = require('express-validator')
-const {handleValidator} = require('../middleware/validation')
+const {handleValidator, ingredientExists} = require('../middleware/validation')
 
 /**
  * @swagger
@@ -33,7 +33,7 @@ router.get('/', function(req, res, next) {
 
   /**
  * @swagger
- * /ingredients/{wasteID}:
+ * /waste/{wasteID}:
  *   get:
  *     tags:
  *       - Waste
@@ -88,8 +88,8 @@ body('ingredientID').isInt().exists(),
 body('dateThrownAway').isInt(),
 body('quantity').isFloat().exists(),
 handleValidator,
+ingredientExists,
 function(req, res, next) {
- res.status(400).json({ errors: errors.array() });
     try {
         res.status(200).json(wasteModel.createLog(req.body));
     } catch(err) {

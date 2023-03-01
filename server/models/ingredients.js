@@ -18,7 +18,7 @@ function createIngredient(ingredientObj) {
 
 function deleteIngredient(id) {
     const result = db.run(
-        'DELETE FROM ingredients WHERE ingredientID = @id', {id: id});        
+        'DELETE FROM ingredients WHERE ingredientID = @id', {id: id});      
     return {message:db.validateChanges(result, 'ingredient deleted successfully', 'Error deleting ingredient')};
 }
 

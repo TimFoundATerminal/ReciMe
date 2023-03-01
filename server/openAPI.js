@@ -47,7 +47,19 @@ const swaggerDefinition = {
             frozen: {
               type: 'int',
               example: 1
-            }
+            },
+            name: {
+              type: 'string',
+              example: 'Chicken Breast'
+            },
+            standardUnit: {
+              type: 'string',
+              example: 'grams'
+            },
+            carbonPerUnit: {
+              type: 'float',
+              example: 20.0
+            },
           }
         },
         pantryPost: {
@@ -123,7 +135,19 @@ const swaggerDefinition = {
             quantity: {
               type: 'float',
               example: '50.5'
-            }
+            },
+            name: {
+              type: 'string',
+              example: 'Chicken Breast'
+            },
+            standardUnit: {
+              type: 'string',
+              example: 'grams'
+            },
+            carbonPerUnit: {
+              type: 'float',
+              example: 20.0
+            },
           }
         },
         wastePost: {

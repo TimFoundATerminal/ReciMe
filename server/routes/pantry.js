@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pantryModel = require('../models/pantry')
 const {param, body, validationResult} = require('express-validator')
-const {handleValidator} = require('../middleware/validation')
+const {handleValidator, ingredientExists} = require('../middleware/validation')
 
 /**
  * @swagger
@@ -120,6 +120,7 @@ router.delete('/:itemID', param('itemID').isInt(),handleValidator,function(req, 
     body('dateExpiry').isInt(),
     body('frozen').isInt({min:0, max:1}).exists(),
     handleValidator, 
+    ingredientExists,
     function(req, res, next) {
       try {
           res.status(200).json(pantryModel.createItem(req.body));

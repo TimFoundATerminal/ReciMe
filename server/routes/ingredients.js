@@ -119,7 +119,7 @@ function(req, res, next) {
  *           
 */
 router.delete('/:ingredientID', param('ingredientID').isInt(),handleValidator,function(req, res, next) {
-      try {
+        try {
           res.status(200).json(ingredientsModel.deleteIngredient(req.params.ingredientID));
       } catch(err) {
       next(err);

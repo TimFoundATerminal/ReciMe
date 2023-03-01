@@ -10,7 +10,7 @@ function getAll() {
 }
 
 function getItem(id) {
-    const data = db.queryRow('SELECT * FROM pantry WHERE itemID = ?', id)
+    const data = db.queryRow('SELECT * FROM pantry INNER JOIN ingredients on ingredients.ingredientID = pantry.ingredientID WHERE itemID = ?', id)
     return data
 }
 
