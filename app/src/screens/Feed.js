@@ -17,12 +17,11 @@ export default function Feed({ navigation }) {
 
   // Ingredients list separated by ,+
 
-
   const [loading, setLoaing] = useState(true)
   const [recipes, setRecipes] = useState([])
 
   // change this (IPV4 address from ipconfig in command line)
-  const pantryCallURL = Constants.API_BASE_URL + `/pantry`
+  const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
 
   useEffect(() => {
     fetch(pantryCallURL, { method: "GET" })
@@ -78,6 +77,7 @@ export default function Feed({ navigation }) {
         {!loading ?? <Text>Loading...</Text>}
 
         {recipes.map((recipe) => (
+
           <View key={recipe.id} style={tw`relative p-4`}>
             <View style={tw`w-full h-45 bg-black rounded-3xl`}>
               <Image
@@ -106,6 +106,7 @@ export default function Feed({ navigation }) {
               </View>
             </View>
           </View>
+          
         ))}
 
       </ScrollView>
