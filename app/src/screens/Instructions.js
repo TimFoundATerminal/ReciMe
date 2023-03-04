@@ -1,44 +1,74 @@
 import { useEffect, useState } from "react"
 import { getInstructionsCall, getInstructionEquipmentImage } from "../Constants"
 import React from 'react';
-import {Button, View, Text} from 'react-native';
+import { Pressable, View, Text } from 'react-native';
 
+const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
-const finishMeal = (pantry, recipeDetails) => {
-
-    const removeItemURL = `${Constants.API_BASE_URL}/pantry`
+    const PANTRY_URL = `${Constants.API_BASE_URL}/pantry`
 
     // filter unused ingredients
-    const usedIngredients = recipeDetails.usedIngredients
+    const usedIngredients = recipeData.usedIngredients
 
     // loop through every item - get quantity -
-    pantry.forEach(pantryItem => {
-
-        const itemQuantity = pantryItem.quantity
+    currentPantryItems.forEach(pantryItem => {
         
-        const ingredientQuantity = usedIngredients.find(ingredient => ingredient.name == item.name).amount
+        const item_API_URL = `${PANTRY_URL}/${pantryItem.id}`
 
-        const remainingItemAmount = ingredientQuantity - itemQuantity
+        // calulcate remaining quantity of food in pantry
+        const usedAmount = usedIngredients.find(ingredient => ingredient.name == item.name).amount
+        const remainingAmount = usedAmount - pantryItem.quantity
 
-        // fetch change -- removeItemURL (name, amount, remainingItemAmount)
+        if (remainingAmount > 0) {
 
+            // if quantity > 0 -> update pantry item
+            const updatedPantryItem = pantry
+            updatedPantryItem.quantity = remainingAmount
+
+            fetch(item_API_URL, {
+                method: 'PUT',
+                body: JSON.stringify(updatedPantryItem),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+
+        } else {
+
+            // else -> delete pantry item
+            fetch(item_API_URL, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+
+        }
     })
 
 }
 
 
-export default function InstructionsPage({ recipe, pantry}) {
+const finishMealRoutine = (currentPantryItems, recipeData) => {
+    
+    updatePantryAfterMeal(currentPantryItems, recipeData)
+    // navigation.navigate('Home')
+}
 
-    const recipeID = recipe.id
+export default function Instructions({ currentPantryItems, recipeData }) {
+
+    
+    const recipeID = recipeData.id
 
     const [instructions, setInstructions] = useState([])
     const [loading, setLoaing] = useState(true)
 
-    const instructionsCall = getInstructionsCall(recipeID)
+    const instructionsCallURL = getInstructionsCall(recipeID)
 
     useEffect(() => {
 
-        fetch(instructionsCall)
+        fetch(instructionsCallURL)
+
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -84,12 +114,13 @@ export default function InstructionsPage({ recipe, pantry}) {
 
             {/* End meal */}
             <View>
-                <Button 
-                    onPress={finishMeal}
-                />
+
+                <Pressable onPress={finishMealRoutine(currentPantryItems, recipeData)}> 
+                    <Text>Finish Meal</Text>
+                </Pressable>
 
             </View>
-            
+
         </View>
     )
 }
