@@ -32,6 +32,7 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
                     "Content-Type": "application/json",
                 }
             })
+            .catch(error => console.error('Error this update should not be running:', error))
 
         } else {
 
@@ -42,6 +43,7 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
                     "Content-Type": "application/json",
                 }
             })
+            .catch(error => console.error('Error this delete should not be running:', error))
 
         }
     })
@@ -97,7 +99,7 @@ export default function Instructions({ currentPantryItems, recipeData }) {
             <ScrollView>
                 <Text>{!loading ?? "Loading..."}</Text>
                 {
-                    instructions ? instructions.steps.map((instructionStep, index) =>
+                    instructions.steps.map((instructionStep, index) =>
                         <View key={index}>
                             <Text>
                                 {`${instructionStep.number}.\n${instructionStep.step}`}
@@ -108,7 +110,7 @@ export default function Instructions({ currentPantryItems, recipeData }) {
                                 }}
                             />
                         </View>
-                    ) : []
+                    ) 
                 }
             </ScrollView>
 

@@ -11,14 +11,15 @@ import Impact from "./src/screens/Impact";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Foundation from "react-native-vector-icons/Foundation";
+import FeedScreen from "./src/screens/Feed";
 
 const FeedStack = createNativeStackNavigator();
 
 function FeedStackScreen() {
   return (
-    <FeedStack.Navigator>
-      <FeedStack.Screen name="Feed" component={Feed} />
-      <FeedStack.Screen name="Instructions" component={Instructions} />
+    <FeedStack.Navigator options={{headerShown: false}} >
+      <FeedStack.Screen name="Feed" component={FeedScreen} options={{headerShown: false}} />
+      <FeedStack.Screen name="Instructions" component={Instructions} options={{headerShown: false}} />
     </FeedStack.Navigator>
   );
 }
@@ -31,7 +32,7 @@ export default function App() {
       <Tab.Navigator initialRouteName="Feed">
         <Tab.Screen
           name="Feed"
-          component={FeedStackScreen}
+          component={Feed}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="ios-list" color={color} size={size} />
@@ -78,12 +79,3 @@ export default function App() {
     </NavigationContainer>
   ); //feed, pantry, impact, blacklist
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
