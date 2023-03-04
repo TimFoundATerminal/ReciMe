@@ -10,9 +10,9 @@ Make sure you are in the `server` directory. Otherwise `cd server`
 #### Install dependecies
 `npm i`
 
-Copy `db-blank.sqlite` and rename it to `db.sqlite` 
+To create the database please run `node factory.js` which will create and populate a database with all of the data.
 
-This is a blank database with the correct scheme setup. Do not delete `db-blank.sqlite` as others will need this in bitbucket to run this setup. 
+To reset the database at anypoint just run this script again and it will reset the database back to default.
 
 #### Start the server
 

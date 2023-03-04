@@ -136,6 +136,10 @@ const swaggerDefinition = {
               type: 'float',
               example: '50.5'
             },
+            carbonWasted: {
+              type: 'float',
+              example: 16.7
+            },
             name: {
               type: 'string',
               example: 'Chicken Breast'
