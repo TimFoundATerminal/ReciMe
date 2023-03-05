@@ -27,11 +27,6 @@ function validateChanges(result, passMsg, failMsg) {
   return message
 }
 
-function validateNotEmpty(data) {
-  console.log(data)
-  let error = new Error('ID does not exist')
-}
-
 module.exports = {
   query,
   queryRow, 
