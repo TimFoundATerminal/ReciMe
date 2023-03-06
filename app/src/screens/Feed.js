@@ -12,57 +12,64 @@ import {
 import tw from "twrnc";
 
 
-export default function FeedScreen({ navigation }) {
+export default function Feed({ navigation, route }) {
+
   const [filterVisible, setFilterVisible] = useState(false);
 
-  const [loading, setLoaing] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState([])
   const [pantry, setPantry] = useState([])
 
   // change this (IPV4 address from ipconfig in command line)
   const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
 
+  const LOCAL_TEST = false
+
   useEffect(() => {
 
-    // get pantry
-    fetch(pantryCallURL, { method: "GET" })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Network response was not ok.');
-      })
-      .catch(error => {
-        console.error('Error:', error)
-        const pantryItems = require('')
-      })
-      .then(pantryItems => {
+    if (loading) {
 
-        setPantry(pantryItems)
+      // get pantry
+      fetch(LOCAL_TEST ? pantryCallURL : '')
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          return response.text().then(text => { throw new Error(text) })
+        })
+        .catch(error => {
+          console.warn('Warning:', error)
+          const backupPantry = [{ "itemID": 1, "ingredientID": 1, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "Chicken Breast", "standardUnit": "grams", "carbonPerUnit": 20 }, { "itemID": 2, "ingredientID": 2, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "tomatoes", "standardUnit": "grams", "carbonPerUnit": 400 }, { "itemID": 3, "ingredientID": 3, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "potatoes", "standardUnit": "kilos", "carbonPerUnit": 900 }]
+          return backupPantry
+        })
+        .then(pantryItems => {
 
-        console.log(pantryItems)
+          setPantry(pantryItems)
 
-        const ingredients = pantryItems.map(pantryItem => pantryItem.name)
-        const spoonacularAPICall = getRecipesCall(ingredients)
+          const ingredients = pantryItems.map(pantryItem => pantryItem.name).join(',+')
+          const spoonacularAPICallURL = getRecipesCall(ingredients)
 
-        // get recipes
-        fetch(spoonacularAPICall)
-          .then(response => {
-            if (response.ok) {
-              return response.json();
-            }
-            throw new Error('Network response was not ok.');
-          })
-          .then(recipes => {
+          // get recipes
+          fetch(LOCAL_TEST ? spoonacularAPICallURL : '')
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              return response.text().then(text => { throw new Error(text) })
+            })
+            .catch((error) => {
+              console.warn('Warning:', error)
+              var backupRecipes = require('./backup-recipes.json')
+              return backupRecipes
+            })
+            .then(recipes => {
 
-            setRecipes(recipes)
-            setLoaing(false)
+              setRecipes(recipes)
+              setLoading(false)
 
-          })
-          .catch(error => console.error('Error:', error));
-      })
-      
-
+            })
+        })
+    }
   })
 
   return (
@@ -83,20 +90,22 @@ export default function FeedScreen({ navigation }) {
       )}
       <ScrollView>
 
-        {!loading ?? <Alert>Loading...</Alert>}
+        {!loading ?? <Text>Loading...</Text>}
 
         {/* when pantry and recipe loaded in -> load feed */}
-        {recipes.map(recipe => (
+        {recipes.map((recipe, i) => (
 
           // link to instructions
-          <Pressable onPress={() =>
+          <Pressable 
+            key={i}
+            onPress={() =>
             navigation.navigate('Instructions', {
               currentPantryItems: pantry,
               recipeData: recipe
             })
           }>
 
-            <View key={recipe.id} style={tw`relative p-4`}>
+            <View style={tw`relative p-4`}>
               <View style={tw`w-full h-45 bg-black rounded-3xl`}>
                 <Image
                   style={tw`rounded-3xl w-full h-full opacity-65`}

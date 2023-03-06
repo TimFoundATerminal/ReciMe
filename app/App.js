@@ -11,14 +11,14 @@ import Impact from "./src/screens/Impact";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Foundation from "react-native-vector-icons/Foundation";
-import FeedScreen from "./src/screens/Feed";
+
 
 const FeedStack = createNativeStackNavigator();
 
 function FeedStackScreen() {
   return (
     <FeedStack.Navigator options={{headerShown: false}} >
-      <FeedStack.Screen name="Feed" component={FeedScreen} options={{headerShown: false}} />
+      <FeedStack.Screen name="Feed" component={Feed}  />
       <FeedStack.Screen name="Instructions" component={Instructions} options={{headerShown: false}} />
     </FeedStack.Navigator>
   );
@@ -31,8 +31,8 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator initialRouteName="Feed">
         <Tab.Screen
-          name="Feed"
-          component={Feed}
+          name="FeedStack"
+          component={FeedStackScreen}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="ios-list" color={color} size={size} />

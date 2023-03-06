@@ -1,0 +1,125 @@
+[
+    {
+        "name": "Preheat oven to 425 degrees. Season chicken with salt and pepper. On a clean work surface, lay cutlets flat (smooth sides down). Fill and roll",
+        "steps": [
+            {
+                "number": 1,
+                "step": "Layer each cutlet with arugula; crumble goat cheese in the center. Starting with the narrow end, roll up chicken tightly; seal with a toothpick.",
+                "ingredients": [
+                    {
+                        "id": 1159,
+                        "name": "goat cheese",
+                        "localizedName": "goat cheese",
+                        "image": "goat-cheese.jpg"
+                    },
+                    {
+                        "id": 11959,
+                        "name": "arugula",
+                        "localizedName": "arugula",
+                        "image": "arugula-or-rocket-salad.jpg"
+                    },
+                    {
+                        "id": 5006,
+                        "name": "whole chicken",
+                        "localizedName": "whole chicken",
+                        "image": "whole-chicken.jpg"
+                    },
+                    {
+                        "id": 0,
+                        "name": "roll",
+                        "localizedName": "roll",
+                        "image": "dinner-yeast-rolls.jpg"
+                    }
+                ],
+                "equipment": [
+                    {
+                        "id": 404644,
+                        "name": "toothpicks",
+                        "localizedName": "toothpicks",
+                        "image": "toothpicks.jpg"
+                    }
+                ]
+            },
+            {
+                "number": 2,
+                "step": "In a large nonstick ovenproof skillet, heat oil over medium-high heat; swirl to coat bottom of pan. Cook, seam side down, until golden brown, 1 to 2 minutes. Turn chicken.",
+                "ingredients": [
+                    {
+                        "id": 5006,
+                        "name": "whole chicken",
+                        "localizedName": "whole chicken",
+                        "image": "whole-chicken.jpg"
+                    },
+                    {
+                        "id": 4582,
+                        "name": "cooking oil",
+                        "localizedName": "cooking oil",
+                        "image": "vegetable-oil.jpg"
+                    }
+                ],
+                "equipment": [
+                    {
+                        "id": 404645,
+                        "name": "frying pan",
+                        "localizedName": "frying pan",
+                        "image": "pan.png"
+                    }
+                ],
+                "length": {
+                    "number": 1,
+                    "unit": "minutes"
+                }
+            },
+            {
+                "number": 3,
+                "step": "Transfer skillet to oven. Cook until chicken is opaque throughout, 10 to 12 minutes.",
+                "ingredients": [
+                    {
+                        "id": 5006,
+                        "name": "whole chicken",
+                        "localizedName": "whole chicken",
+                        "image": "whole-chicken.jpg"
+                    }
+                ],
+                "equipment": [
+                    {
+                        "id": 404645,
+                        "name": "frying pan",
+                        "localizedName": "frying pan",
+                        "image": "pan.png"
+                    },
+                    {
+                        "id": 404784,
+                        "name": "oven",
+                        "localizedName": "oven",
+                        "image": "oven.jpg"
+                    }
+                ],
+                "length": {
+                    "number": 10,
+                    "unit": "minutes"
+                }
+            },
+            {
+                "number": 4,
+                "step": "Remove toothpicks, and slice chicken crosswise before serving, if desired.",
+                "ingredients": [
+                    {
+                        "id": 5006,
+                        "name": "whole chicken",
+                        "localizedName": "whole chicken",
+                        "image": "whole-chicken.jpg"
+                    }
+                ],
+                "equipment": [
+                    {
+                        "id": 404644,
+                        "name": "toothpicks",
+                        "localizedName": "toothpicks",
+                        "image": "toothpicks.jpg"
+                    }
+                ]
+            }
+        ]
+    }
+]

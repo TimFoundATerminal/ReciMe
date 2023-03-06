@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { getInstructionsCall, getInstructionEquipmentImage } from "../Constants"
 import React from 'react';
-import { Pressable, View, Text } from 'react-native';
+import { Pressable, View, Text, Alert, ScrollView } from 'react-native';
 
 const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
@@ -12,7 +12,7 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
     // loop through every item - get quantity -
     currentPantryItems.forEach(pantryItem => {
-        
+
         const item_API_URL = `${PANTRY_URL}/${pantryItem.id}`
 
         // calulcate remaining quantity of food in pantry
@@ -32,7 +32,7 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
                     "Content-Type": "application/json",
                 }
             })
-            .catch(error => console.error('Error this update should not be running:', error))
+                .catch(error => console.error('Error this update should not be running:', error))
 
         } else {
 
@@ -43,52 +43,64 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
                     "Content-Type": "application/json",
                 }
             })
-            .catch(error => console.error('Error this delete should not be running:', error))
+                .catch(error => console.error('Error this delete should not be running:', error))
 
         }
     })
-
 }
 
+export default function Instructions({ navigation, route }) {
 
-const finishMealRoutine = (currentPantryItems, recipeData) => {
-    
-    updatePantryAfterMeal(currentPantryItems, recipeData)
-    // navigation.navigate('Home')
-}
+    const recipeData = route.params.recipeData
+    const currentPantryItems = route.params.currentPantryItems
 
-export default function Instructions({ currentPantryItems, recipeData }) {
-
-    
     const recipeID = recipeData.id
 
+    const LOCAL_TEST = false
+
     const [instructions, setInstructions] = useState([])
-    const [loading, setLoaing] = useState(true)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
     const instructionsCallURL = getInstructionsCall(recipeID)
 
     useEffect(() => {
 
-        fetch(instructionsCallURL)
+        if (loading) {
+            fetch(LOCAL_TEST ? instructionsCallURL : '' )
+                .then(response => {
+                    console.error(response)
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    return response.text().then(text => { throw new Error(text) })
+                })
+                .catch(errorMsg =>  {
+                    console.warn('Error:', errorMsg)
+                    return null
+                })   
+                .then(theInstructions => {
+                    if (theInstructions != null) {
+                        setInstructions(theInstructions)
+                    } else {
+                        setError('Could not use local API :(')
+                    }
+                    setLoading(false)
+                })
+        }
 
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Network response was not ok.')
-            })
-            .then(instructions => {
 
-                setInstructions(instructions)
-                setLoaing(false)
-
-            })
-            .catch(error => console.error('Error:', error))
     })
 
     return (
 
         <View>
+
+            {() => {
+                if (error != null) {
+                    return <Alert>{error}</Alert>
+                }
+            }}
 
             {/* Start Meal */}
             <View>
@@ -99,26 +111,27 @@ export default function Instructions({ currentPantryItems, recipeData }) {
             <ScrollView>
                 <Text>{!loading ?? "Loading..."}</Text>
                 {
-                    instructions.steps.map((instructionStep, index) =>
+                    !instructions ?? instructions.steps.map((instructionStep, index) =>
                         <View key={index}>
                             <Text>
                                 {`${instructionStep.number}.\n${instructionStep.step}`}
                             </Text>
                             <Image
                                 source={{
-                                    uri: getInstructionEquipmentImage(recipeId, instructionStep.image)
+                                    uri: getInstructionEquipmentImage(recipeID, instructionStep.image)
                                 }}
                             />
                         </View>
-                    ) 
+                    )
                 }
             </ScrollView>
 
             {/* End meal */}
             <View>
 
-                <Pressable onPress={finishMealRoutine(currentPantryItems, recipeData)}> 
+                <Pressable onPress={updatePantryAfterMeal(currentPantryItems, recipeData)}>
                     <Text>Finish Meal</Text>
+                    {/* then navigation.goBack() to go back to feed */}
                 </Pressable>
 
             </View>
