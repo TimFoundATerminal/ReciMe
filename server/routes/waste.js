@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const wasteModel = require('../models/waste')
-const {param, body, validationResult} = require('express-validator')
-const {handleValidator} = require('../middleware/validation')
+const {param, body, query, validationResult} = require('express-validator')
+const {handleValidator, ingredientExists} = require('../middleware/validation')
 
 /**
  * @swagger
@@ -12,6 +12,19 @@ const {handleValidator} = require('../middleware/validation')
  *       - Waste
  *     summary: Retrieve all waste
  *     description: Retrieve all the waste logs 
+ *     parameters:
+ *       - name: dateBefore
+ *         in: query
+ *         description: Filter results to before dateBefore
+ *         required: false
+ *         schema:
+ *           type: integer
+*       - name: dateAfter
+ *         in: query
+ *         description: Filter results to after dateAfter
+ *         required: false
+ *         schema:
+ *           type: integer
  *     responses:
  *       '200':
  *         description: Successful operation
@@ -23,9 +36,61 @@ const {handleValidator} = require('../middleware/validation')
  *                 $ref: '#/components/schemas/waste'
  *               
 */
+query('dateBefore').isInt().optional(),
+query('dateAfter').isInt().optional(),
+handleValidator,
 router.get('/', function(req, res, next) {
     try {
-        res.status(200).json(wasteModel.getAll());
+      dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
+      dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
+        res.status(200).json(wasteModel.getAll(dateBefore, dateAfter));
+      } catch(err) {
+        next(err);
+      }
+  });
+
+/**
+ * @swagger
+ * /waste/carbonTotal:
+ *   get:
+ *     tags:
+ *       - Waste
+ *     summary: Return the total carbon waste
+ *     description: Return the total carbon wasted for a date range
+ *     parameters:
+ *       - name: dateBefore
+ *         in: query
+ *         description: Filter results to before dateBefore
+ *         required: false
+ *         schema:
+ *           type: integer
+*       - name: dateAfter
+ *         in: query
+ *         description: Filter results to after dateAfter
+ *         required: false
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: float
+ *                   example: 47.5
+ *                                 
+*/
+query('dateBefore').isInt().optional(),
+query('dateAfter').isInt().optional(),
+handleValidator,
+router.get('/carbonTotal', function(req, res, next) {
+    try {
+      dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
+      dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
+        res.status(200).json(wasteModel.sumCarbon(dateBefore, dateAfter));
       } catch(err) {
         next(err);
       }
@@ -33,7 +98,7 @@ router.get('/', function(req, res, next) {
 
   /**
  * @swagger
- * /ingredients/{wasteID}:
+ * /waste/{wasteID}:
  *   get:
  *     tags:
  *       - Waste
@@ -85,11 +150,11 @@ router.get('/:wasteID', param('wasteID').isInt(),handleValidator,function(req, r
 */
 router.post('/', 
 body('ingredientID').isInt().exists(),
-body('dateThrownAway').isISO8601('yyyy-mm-dd').exists(),
+body('dateThrownAway').isInt().exists(),
 body('quantity').isFloat().exists(),
 handleValidator,
+ingredientExists,
 function(req, res, next) {
- res.status(400).json({ errors: errors.array() });
     try {
         res.status(200).json(wasteModel.createLog(req.body));
     } catch(err) {

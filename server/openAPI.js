@@ -40,18 +40,26 @@ const swaggerDefinition = {
               type: 'float',
               example: 100.0
             },
-            dateAdded: {
-              type: 'string',
-              example: '2023-02-24'
-            },
             dateExpiry: {
-              type: 'string',
-              example: '2023-02-24'
+              type: 'integer',
+              example: 20230224
             },
             frozen: {
               type: 'int',
               example: 1
-            }
+            },
+            name: {
+              type: 'string',
+              example: 'Chicken Breast'
+            },
+            standardUnit: {
+              type: 'string',
+              example: 'grams'
+            },
+            carbonPerUnit: {
+              type: 'float',
+              example: 20.0
+            },
           }
         },
         pantryPost: {
@@ -64,13 +72,9 @@ const swaggerDefinition = {
               type: 'float',
               example: 100.0
             },
-            dateAdded: {
-              type: 'string',
-              example: '2023-02-24'
-            },
             dateExpiry: {
-              type: 'string',
-              example: '2023-02-24'
+              type: 'integer',
+              example: 20230224
             },
             frozen: {
               type: 'int',
@@ -93,8 +97,8 @@ const swaggerDefinition = {
               example: 'grams'
             },
             carbonPerUnit: {
-              type: 'integer',
-              example: 20
+              type: 'float',
+              example: 20.0
             },
           }
         },
@@ -110,8 +114,8 @@ const swaggerDefinition = {
               example: 'grams'
             },
             carbonPerUnit: {
-              type: 'integer',
-              example: 20
+              type: 'float',
+              example: 20.0
             },
           }
         },
@@ -119,30 +123,46 @@ const swaggerDefinition = {
           type: 'object',
           properties: {
             wasteID: {
-              type: 'string'
+              type: 'integer'
             },
             ingredientID: {
-              type: 'string'
+              type: 'integer'
             },
             dateThrownAway: {
-              type: 'string',
-              example: '2023-02-26'
+              type: 'integer',
+              example: 20230226
             },
             quantity: {
               type: 'float',
               example: '50.5'
-            }
+            },
+            carbonWasted: {
+              type: 'float',
+              example: 16.7
+            },
+            name: {
+              type: 'string',
+              example: 'Chicken Breast'
+            },
+            standardUnit: {
+              type: 'string',
+              example: 'grams'
+            },
+            carbonPerUnit: {
+              type: 'float',
+              example: 20.0
+            },
           }
         },
         wastePost: {
           type: 'object',
           properties: {
             ingredientID: {
-              type: 'string'
+              type: 'integer'
             },
             dateThrownAway: {
-              type: 'string',
-              example: '2023-02-26'
+              type: 'integer',
+              example: 20230226
             },
             quantity: {
               type: 'float',
