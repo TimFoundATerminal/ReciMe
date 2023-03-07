@@ -18,7 +18,7 @@ class Main extends Component {
 
   //HTTPS REQUEST (FETCH)
   goForFetch = () => {
-      fetch('http://192.168.1.120:3000/api/pantry', {
+      fetch('http://172.20.10.2:3000/api/pantry', {
         method: 'GET'
       })
       .then(response => response.json())
@@ -42,20 +42,83 @@ class Main extends Component {
           />
       );
   }
-  
+
+  //REMOVE ITEM FUNCTIONALITY
+  removeItem = (itemToDelete) => {
+    fetch('http://172.20.10.2:3000/api/pantry/' + itemToDelete, {
+        method: 'DELETE'
+    })
+    .catch(error => console.log(error))
+  }
+
+  deleteItemByID = (itemToDelete) => {
+    const filteredData = this.state.dataSource.filter(item => item.itemID != itemToDelete);
+    this.setState({ dataSource: filteredData });
+    this.removeItem(itemToDelete);
+  }
+
+  // UPDATE WHETHER ITEM IS FROZEN OR NOT
+  updateItem = (itemToUpdate, getIngredientID, getQuantity, getDateExpiry, freezeValue) => {
+
+    const putURL = 'http://172.20.10.2:3000/api/pantry/' + itemToUpdate
+
+    fetch(putURL, {
+      method: 'PUT',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ingredientID: getIngredientID,
+        quantity: getQuantity,
+        dateExpiry: getDateExpiry,
+        frozen: freezeValue
+      }),
+    })
+    .then(response => response.json())
+    .then((responseJson) => {
+        console.log('getting data from fetch', responseJson)
+        this.goForFetch()
+    })
+    .catch(error => console.log(error))
+  }
 
   // UI COMPONENT FOR EACH FOOD ITEM
   render() {
 
-      const Item = ({ name, quantity, standardUnit }) => (
-        <View style={{ paddingVertical: 4, margin: 5, backgroundColor: "#fff" }}>
-          <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>{name}</Text>
-          <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Quantity: {quantity} {standardUnit}</Text>
-        </View>
-      );
+      const Item = ({ name, quantity, standardUnit, itemID, frozen, ingredientID, dateExpiry }) => {
+
+        let frozenButton;
+        let freezeText;
+        if (frozen) {
+          freezeText = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Frozen</Text>
+          frozenButton = <Text style={{ fontSize: 15, color: 'white' }}>Unfreeze</Text>
+          frozen = 0;
+        } else {
+          freezeText = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Not Frozen</Text>
+          frozenButton = <Text style={{ fontSize: 15, color: 'white' }}>Freeze</Text>
+          frozen = 1;
+        }
+
+        return (
+          <View style={{ paddingVertical: 4, margin: 5, backgroundColor: "#fff" }}>
+            <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>{name}</Text>
+            <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Quantity: {quantity} {standardUnit}</Text>
+            {freezeText}
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <Pressable onPress={() => this.deleteItemByID(itemID)} color='#056835' style={styles.button}>
+                  <Text style={{ fontSize: 15, color: 'white' }}>-</Text>
+              </Pressable>
+              <Pressable onPress={() => this.updateItem(itemID, ingredientID, quantity, dateExpiry, frozen)} color='#056835' style={styles.button}>
+                {frozenButton}
+              </Pressable>
+            </View>
+          </View>
+        )
+      };
       
       const renderItem = ({ item }) => (
-        <Item name={item.name} quantity={item.quantity} standardUnit={item.standardUnit} />
+        <Item name={item.name} quantity={item.quantity} standardUnit={item.standardUnit} itemID={item.itemID} frozen={item.frozen} ingredientID={item.ingredientID} dateExpiry={item.dateExpiry} />
       );
 
       // NAVIGATION FUNCTIONS
@@ -97,6 +160,7 @@ class Main extends Component {
                 ItemSeparatorComponent={this.FlatListSeparator}
                 renderItem={renderItem}
                 keyExtractor={item => item.ingredientID}
+
               />
               
               {/* LOADING UI WHILST FETCHING */}
@@ -167,7 +231,7 @@ const AddFood = (props) => {
   React.useEffect(() => {
     //(async () => {
     try {
-      fetch('http://192.168.1.120:3000/api/ingredients', {
+      fetch('http://172.20.10.2:3000/api/ingredients', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -226,7 +290,7 @@ const AddFood = (props) => {
   // ASYNC COMPONENT TO POST DATA TO API  
   const storeData = async () => {
     try {
-      await fetch('http://192.168.1.120:3000/api/pantry', {
+      await fetch('http://172.20.10.2:3000/api/pantry', {
         method: 'POST',
         headers: {
           'Accept': '*/*',
@@ -247,7 +311,7 @@ const AddFood = (props) => {
     }
   }
 
-  const ingredientURL = 'http://192.168.1.120:3000/api/ingredients/' + getSelected;
+  const ingredientURL = 'http://172.20.10.2:3000/api/ingredients/' + getSelected;
 
   //ASYNC COMPONENT TO GET CORRESPONDING STANDARD UNIT FOR ID
   const getStandardUnit = async () => {
