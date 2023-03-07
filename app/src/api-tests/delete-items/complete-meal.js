@@ -33,15 +33,15 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
     const usedIngredients = recipeData.usedIngredients
 
     // loop through every item - get quantity -
-    currentPantryItems.forEach(pantryItem => {
-
-        const item_API_URL = `${PANTRY_URL}/${pantryItem.itemID}`
+    usedIngredients.forEach(ingredient => {
 
         // calulcate remaining quantity of food in pantry
-        const usedIngredient = usedIngredients.find(ingredient => ingredient.name == pantryItem.name)
-
+        const usedPantryItem = currentPantryItems.find(pantryItem => ingredient.name == pantryItem.name)
+    
         // if found -- pantryName == ingredientName
-        if (usedIngredient) {
+        if (usedPantryItem) {
+
+            const item_API_URL = `${PANTRY_URL}/${usedPantryItem.itemID}`
 
             const remainingAmount = pantryItem.quantity - usedIngredient.amount
 
@@ -49,17 +49,12 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
             if (remainingAmount > 0) {
 
                 // if quantity > 0 -> update pantry item
-                const updatedPantryItem = pantryItem
-                updatedPantryItem.quantity = remainingAmount
-
-                // format for edit
-                delete updatedPantryItem.standardUnit
-                delete updatedPantryItem.name
-                delete updatedPantryItem.carbonPerUnit
 
                 fetch(item_API_URL, {
                     method: 'PUT',
-                    body: JSON.stringify(updatedPantryItem),
+                    body: JSON.stringify({
+                        quantity: remainingAmount
+                    }),
                     headers: {
                         "Content-Type": "application/json",
                     }
@@ -88,7 +83,7 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
 }
 
-var pantryBefore = require('./pantry-before.json')
+var pantryBefore = require('./before.json')
 var recipe = require('./recipe.json')
 
 CreatePantryFileFromAPI('before.json')

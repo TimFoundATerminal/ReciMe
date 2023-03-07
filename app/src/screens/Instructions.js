@@ -6,21 +6,19 @@ import tw from "twrnc";
 
 const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
-    const PANTRY_URL = `http://localhost:3000/api/pantry` // needs UPDATE
-
     // filter unused ingredients
     const usedIngredients = recipeData.usedIngredients
 
     // loop through every item - get quantity -
-    currentPantryItems.forEach(pantryItem => {
-
-        const item_API_URL = `${PANTRY_URL}/${pantryItem.itemID}`
+    usedIngredients.forEach(ingredient => {
 
         // calulcate remaining quantity of food in pantry
-        const usedIngredient = usedIngredients.find(ingredient => ingredient.name == pantryItem.name)
+        const usedPantryItem = currentPantryItems.find(pantryItem => ingredient.name == pantryItem.name)
 
         // if found -- pantryName == ingredientName
-        if (usedIngredient) {
+        if (usedPantryItem) {
+
+            const item_API_URL = `${PANTRY_URL}/${usedPantryItem.itemID}`
 
             const remainingAmount = pantryItem.quantity - usedIngredient.amount
 
@@ -28,28 +26,23 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
             if (remainingAmount > 0) {
 
                 // if quantity > 0 -> update pantry item
-                const updatedPantryItem = pantryItem
-                updatedPantryItem.quantity = remainingAmount
-
-                // format for edit
-                delete updatedPantryItem.standardUnit
-                delete updatedPantryItem.name
-                delete updatedPantryItem.carbonPerUnit
 
                 fetch(item_API_URL, {
                     method: 'PUT',
-                    body: JSON.stringify(updatedPantryItem),
+                    body: JSON.stringify({
+                        quantity: remainingAmount
+                    }),
                     headers: {
                         "Content-Type": "application/json",
                     }
                 })
-                .then((msg) => {
-                    console.log(msg)
-                })
+                    .then((msg) => {
+                        console.log(msg)
+                    })
 
                     .catch(error => console.error('Error this update should not be running:', error))
 
-            // DELETE - UPDATED if quantity <= 0 (used up)
+                // DELETE - UPDATED if quantity <= 0 (used up)
             } else {
 
                 // else -> delete pantry item
@@ -60,11 +53,9 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
                     }
                 })
                     .catch(error => console.error('Error this delete should not be running:', error))
-
             }
         }
     })
-
 }
 
 export default function Instructions({ navigation, route }) {
@@ -130,7 +121,7 @@ export default function Instructions({ navigation, route }) {
 
                 <Image
                     style={tw`rounded-3xl w-full h-full `}
-                    source={{                     
+                    source={{
                         uri: recipeData.Image
                     }}
                 />
