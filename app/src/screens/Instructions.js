@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
-import { getInstructionsCall, getInstructionEquipmentImage } from "../Constants"
+import { getInstructionsCall, getIngredientsPicture } from "../Constants"
 import React from 'react';
-import { Pressable, View, Text, Alert, ScrollView } from 'react-native';
+import { Pressable, View, Text, Alert, ScrollView, Image } from 'react-native';
+import tw from "twrnc";
 
 const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
 
-    const PANTRY_URL = `${Constants.API_BASE_URL}/pantry`
+    const PANTRY_URL = `http://localhost:3000/api/pantry` // needs UPDATE
 
     // filter unused ingredients
     const usedIngredients = recipeData.usedIngredients
@@ -13,40 +14,57 @@ const updatePantryAfterMeal = (currentPantryItems, recipeData) => {
     // loop through every item - get quantity -
     currentPantryItems.forEach(pantryItem => {
 
-        const item_API_URL = `${PANTRY_URL}/${pantryItem.id}`
+        const item_API_URL = `${PANTRY_URL}/${pantryItem.itemID}`
 
         // calulcate remaining quantity of food in pantry
-        const usedAmount = usedIngredients.find(ingredient => ingredient.name == item.name).amount
-        const remainingAmount = usedAmount - pantryItem.quantity
+        const usedIngredient = usedIngredients.find(ingredient => ingredient.name == pantryItem.name)
 
-        if (remainingAmount > 0) {
+        // if found -- pantryName == ingredientName
+        if (usedIngredient) {
 
-            // if quantity > 0 -> update pantry item
-            const updatedPantryItem = pantry
-            updatedPantryItem.quantity = remainingAmount
+            const remainingAmount = pantryItem.quantity - usedIngredient.amount
 
-            fetch(item_API_URL, {
-                method: 'PUT',
-                body: JSON.stringify(updatedPantryItem),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
-                .catch(error => console.error('Error this update should not be running:', error))
+            // EDIT - PUT - UPDATED if quantity > 0
+            if (remainingAmount > 0) {
 
-        } else {
+                // if quantity > 0 -> update pantry item
+                const updatedPantryItem = pantryItem
+                updatedPantryItem.quantity = remainingAmount
 
-            // else -> delete pantry item
-            fetch(item_API_URL, {
-                method: 'DELETE',
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
-                .catch(error => console.error('Error this delete should not be running:', error))
+                // format for edit
+                delete updatedPantryItem.standardUnit
+                delete updatedPantryItem.name
+                delete updatedPantryItem.carbonPerUnit
 
+                fetch(item_API_URL, {
+                    method: 'PUT',
+                    body: JSON.stringify(updatedPantryItem),
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+                .then((msg) => {
+                    console.log(msg)
+                })
+
+                    .catch(error => console.error('Error this update should not be running:', error))
+
+            // DELETE - UPDATED if quantity <= 0 (used up)
+            } else {
+
+                // else -> delete pantry item
+                fetch(item_API_URL, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
+                    .catch(error => console.error('Error this delete should not be running:', error))
+
+            }
         }
     })
+
 }
 
 export default function Instructions({ navigation, route }) {
@@ -56,7 +74,7 @@ export default function Instructions({ navigation, route }) {
 
     const recipeID = recipeData.id
 
-    const LOCAL_TEST = false
+    const use_backup_data = true
 
     const [instructions, setInstructions] = useState([])
     const [loading, setLoading] = useState(true)
@@ -67,21 +85,21 @@ export default function Instructions({ navigation, route }) {
     useEffect(() => {
 
         if (loading) {
-            fetch(LOCAL_TEST ? instructionsCallURL : '' )
+            fetch(use_backup_data ? instructionsCallURL : '')
                 .then(response => {
-                    console.error(response)
                     if (response.ok) {
                         return response.json();
                     }
                     return response.text().then(text => { throw new Error(text) })
                 })
-                .catch(errorMsg =>  {
+                .catch(errorMsg => {
                     console.warn('Error:', errorMsg)
-                    return null
-                })   
+                    var backupInstructionsData = require('./backup-data/backup-instructions.json')
+                    return backupInstructionsData
+                })
                 .then(theInstructions => {
                     if (theInstructions != null) {
-                        setInstructions(theInstructions)
+                        setInstructions(theInstructions[0].steps)
                     } else {
                         setError('Could not use local API :(')
                     }
@@ -94,45 +112,68 @@ export default function Instructions({ navigation, route }) {
 
     return (
 
-        <View>
+        <View style={tw`flex px-3 py-3`}>
 
             {() => {
                 if (error != null) {
-                    return <Alert>{error}</Alert>
+                    return <Alert><Text>{error}</Text></Alert>
                 }
             }}
+
+            {/* Title */}
+            <Text style={tw`text-[16px] mb-0 font-bold my-2`}>
+                {recipeData.title}
+            </Text>
 
             {/* Start Meal */}
             <View>
 
+                <Image
+                    style={tw`rounded-3xl w-full h-full `}
+                    source={{                     
+                        uri: recipeData.Image
+                    }}
+                />
+
             </View>
 
-            {/* Instructions */}
-            <ScrollView>
+
+            <View >
+
+                {/* Instructions */}
+
                 <Text>{!loading ?? "Loading..."}</Text>
-                {
-                    !instructions ?? instructions.steps.map((instructionStep, index) =>
-                        <View key={index}>
-                            <Text>
-                                {`${instructionStep.number}.\n${instructionStep.step}`}
-                            </Text>
-                            <Image
-                                source={{
-                                    uri: getInstructionEquipmentImage(recipeID, instructionStep.image)
-                                }}
-                            />
-                        </View>
-                    )
-                }
-            </ScrollView>
 
-            {/* End meal */}
-            <View>
+                {instructions.map((instructionStep, index) => (
+                    <View key={index} style={tw`pb-6 flex flex-row`}>
 
-                <Pressable onPress={updatePantryAfterMeal(currentPantryItems, recipeData)}>
-                    <Text>Finish Meal</Text>
-                    {/* then navigation.goBack() to go back to feed */}
-                </Pressable>
+                        <Text>
+                            {instructionStep.number + '. '}
+                            {instructionStep.step}
+                        </Text>
+
+
+                    </View>
+                ))}
+
+                {/* End meal */}
+                <View>
+
+                    <Pressable
+                        style={tw`bg-green-700 hover:bg-green-700 py-2 px-4 rounded`}
+                        onPress={
+                            () => {
+                                updatePantryAfterMeal(currentPantryItems, recipeData)
+                                navigation.goBack()
+                            }
+                        }>
+                        <Text style={tw` text-white font-bold`}>
+                            Finish Meal
+                        </Text>
+                    </Pressable>
+
+                </View>
+
 
             </View>
 

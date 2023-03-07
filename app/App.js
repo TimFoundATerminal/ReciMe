@@ -19,7 +19,7 @@ function FeedStackScreen() {
   return (
     <FeedStack.Navigator options={{headerShown: false}} >
       <FeedStack.Screen name="Feed" component={Feed}  />
-      <FeedStack.Screen name="Instructions" component={Instructions} options={{headerShown: false}} />
+      <FeedStack.Screen name="Instructions" component={Instructions} />
     </FeedStack.Navigator>
   );
 }
@@ -34,6 +34,7 @@ export default function App() {
           name="FeedStack"
           component={FeedStackScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="ios-list" color={color} size={size} />
             ),

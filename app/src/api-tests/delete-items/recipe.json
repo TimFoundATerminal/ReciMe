@@ -1,0 +1,71 @@
+{
+    "id": 638288,
+    "title": "Chicken Roll-Ups With Feta Cheese and Arugula",
+    "image": "https://spoonacular.com/recipeImages/638288-312x231.jpg",
+    "imageType": "jpg",
+    "usedIngredientCount": 2,
+    "missedIngredientCount": 1,
+    "missedIngredients": [
+        {
+            "id": 10011959,
+            "amount": 1,
+            "unit": "bunch",
+            "unitLong": "bunch",
+            "unitShort": "bunch",
+            "aisle": "Produce",
+            "name": "baby arugula",
+            "original": "1 bunch large baby arugula",
+            "originalName": "baby arugula",
+            "meta": [],
+            "image": "https://spoonacular.com/cdn/ingredients_100x100/arugula-or-rocket-salad.jpg"
+        }
+    ],
+    "usedIngredients": [
+        {
+            "id": 5062,
+            "amount": 1.5,
+            "unit": "pounds",
+            "unitLong": "pounds",
+            "unitShort": "lb",
+            "aisle": "Meat",
+            "name": "chicken breast",
+            "original": "8 chicken breast cutlets, (about 1 ½ pounds)",
+            "originalName": "chicken breast cutlets, (about",
+            "meta": [],
+            "image": "https://spoonacular.com/cdn/ingredients_100x100/chicken-breasts.png"
+        },
+        {
+            "id": 11955,
+            "amount": 3,
+            "unit": "ounces",
+            "unitLong": "ounces",
+            "unitShort": "oz",
+            "aisle": "Canned and Jarred;Produce",
+            "name": "tomatoes",
+            "original": "3 ounces soft crumbled feta cheese with basil and sun-dried tomato, broken into small pie",
+            "originalName": "soft crumbled feta cheese with basil and sun-dried tomato, broken into small pie",
+            "meta": [
+                "with basil and sun-dried tomato, broken into small pie",
+                "crumbled",
+                "soft"
+            ],
+            "image": "https://spoonacular.com/cdn/ingredients_100x100/sundried-tomatoes.jpg"
+        }
+    ],
+    "unusedIngredients": [
+        {
+            "id": 11352,
+            "amount": 1,
+            "unit": "serving",
+            "unitLong": "serving",
+            "unitShort": "serving",
+            "aisle": "Produce",
+            "name": "potatoes",
+            "original": "potatoes",
+            "originalName": "potatoes",
+            "meta": [],
+            "image": "https://spoonacular.com/cdn/ingredients_100x100/potatoes-yukon-gold.png"
+        }
+    ],
+    "likes": 2
+}

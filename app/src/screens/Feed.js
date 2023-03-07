@@ -7,7 +7,6 @@ import {
   ScrollView,
   Image,
   Pressable,
-  Alert
 } from "react-native";
 import tw from "twrnc";
 
@@ -23,14 +22,14 @@ export default function Feed({ navigation, route }) {
   // change this (IPV4 address from ipconfig in command line)
   const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
 
-  const LOCAL_TEST = false
+  const use_backup_data = false
 
   useEffect(() => {
 
     if (loading) {
 
       // get pantry
-      fetch(LOCAL_TEST ? pantryCallURL : '')
+      fetch(use_backup_data ? pantryCallURL : '')
         .then(response => {
           if (response.ok) {
             return response.json();
@@ -39,7 +38,7 @@ export default function Feed({ navigation, route }) {
         })
         .catch(error => {
           console.warn('Warning:', error)
-          const backupPantry = [{ "itemID": 1, "ingredientID": 1, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "Chicken Breast", "standardUnit": "grams", "carbonPerUnit": 20 }, { "itemID": 2, "ingredientID": 2, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "tomatoes", "standardUnit": "grams", "carbonPerUnit": 400 }, { "itemID": 3, "ingredientID": 3, "quantity": 100, "dateExpiry": 20230224, "frozen": 1, "name": "potatoes", "standardUnit": "kilos", "carbonPerUnit": 900 }]
+          const backupPantry = require('./backup-data/backup-pantry.json')
           return backupPantry
         })
         .then(pantryItems => {
@@ -50,7 +49,7 @@ export default function Feed({ navigation, route }) {
           const spoonacularAPICallURL = getRecipesCall(ingredients)
 
           // get recipes
-          fetch(LOCAL_TEST ? spoonacularAPICallURL : '')
+          fetch(use_backup_data ? spoonacularAPICallURL : '')
             .then(response => {
               if (response.ok) {
                 return response.json();
@@ -59,7 +58,7 @@ export default function Feed({ navigation, route }) {
             })
             .catch((error) => {
               console.warn('Warning:', error)
-              var backupRecipes = require('./backup-recipes.json')
+              var backupRecipes = require('./backup-data/backup-recipes.json')
               return backupRecipes
             })
             .then(recipes => {

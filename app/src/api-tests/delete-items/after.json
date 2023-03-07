@@ -2,7 +2,7 @@
     {
         "itemID": 1,
         "ingredientID": 1,
-        "quantity": 100,
+        "quantity": 98.5,
         "dateExpiry": 20230224,
         "frozen": 1,
         "name": "Chicken Breast",
@@ -12,7 +12,7 @@
     {
         "itemID": 2,
         "ingredientID": 2,
-        "quantity": 100,
+        "quantity": 97,
         "dateExpiry": 20230224,
         "frozen": 1,
         "name": "tomatoes",
