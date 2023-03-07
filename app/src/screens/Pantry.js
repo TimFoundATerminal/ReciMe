@@ -16,9 +16,9 @@ class Main extends Component {
     };
   }
 
-  // HTTPS REQUEST (FETCH)
+  //HTTPS REQUEST (FETCH)
   goForFetch = () => {
-      fetch('http://172.20.10.2:3000/api/pantry', {
+      fetch('http://192.168.1.120:3000/api/pantry', {
         method: 'GET'
       })
       .then(response => response.json())
@@ -150,28 +150,24 @@ const BarcodeOrManual = (props) => {
 // MANUALLY ADD FOOD
 const AddFood = (props) => {
 
-  // const initialState = [
-  //   {key: "", standardUnit: ""},
-  // ]
   // DROPDOWN MENU CONST (1 - for dropdown menu, 2 - for API call, 3 - for getting the standard unit)
   const [getSelected, setSelected] = React.useState("");
   const [ingredientData, setData] = React.useState([]);
-  const [getStandardUnit, setStandardUnit] = React.useState([]);
-  const temp = [];
+  const [SUData, setSUData] = React.useState("");
 
   // QUANTITY CONST
   const [getQuantity, setQuantity] = React.useState("");
 
   // DATE CONST
   const [getDay, setDay] = React.useState("");
-  const [getMonth, setMonth] = React.useState("");
+  const [getMonth, setMonth] = React.useState('1');
   const [getYear, setYear] = React.useState("");
 
   // DROPDOWN MENU DATA
   React.useEffect(() => {
     //(async () => {
     try {
-      fetch('http://172.20.10.2:3000/api/ingredients', {
+      fetch('http://192.168.1.120:3000/api/ingredients', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -186,13 +182,8 @@ const AddFood = (props) => {
         let newArray = responseJson.map((item) => {
           return {key: item.ingredientID, value: item.name}
         })
-        let newArraySU = responseJson.map((item) => {
-          return {key: item.ingredientID, standardUnit: item.standardUnit}
-        })
         // Set data variable
-        setStandardUnit(newArraySU)
         setData(newArray)
-        console.log(getStandardUnit)
       })
     }
     catch (error) {
@@ -201,42 +192,77 @@ const AddFood = (props) => {
     //})
   },[])
 
-  const dayData = [
-    {key:'1',value:'01'},
-  ]
-
   const monthData = [
     {key:'1',value:'01'},
+    {key:'2',value:'02'},
+    {key:'3',value:'03'},
+    {key:'4',value:'04'},
+    {key:'5',value:'05'},
+    {key:'6',value:'06'},
+    {key:'7',value:'07'},
+    {key:'8',value:'08'},
+    {key:'9',value:'09'},
+    {key:'10',value:'10'},
+    {key:'11',value:'11'},
+    {key:'12',value:'12'},
+  ]
+
+  const dayData = [
+    {key:'1',value:'01'}
   ]
 
   const yearData = [
     {key:'2023',value:'2023'},
+    {key:'2024',value:'2024'},
+    {key:'2025',value:'2025'},
   ]
 
   const onPressBack = () => {
     props.navigation.navigate('BarcodeOrManual');
   }
 
-  const concatDate = getDay + getMonth + getYear
+  const concatDate = getYear + getDay + getMonth;
 
   // ASYNC COMPONENT TO POST DATA TO API  
   const storeData = async () => {
     try {
-      await fetch('http://172.20.10.2:3000/api/pantry', {
+      await fetch('http://192.168.1.120:3000/api/pantry', {
         method: 'POST',
         headers: {
           'Accept': '*/*',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ingredientID: {getSelected},
-          quantity: {getQuantity},
-          dateExpiry: {concatDate},
+          ingredientID: getSelected,
+          quantity: getQuantity,
+          dateExpiry: concatDate,
           frozen: 1
         })
       })
       .then(response => response.json())
       .then(responseJson => console.log(responseJson))
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  const ingredientURL = 'http://192.168.1.120:3000/api/ingredients/' + getSelected;
+
+  //ASYNC COMPONENT TO GET CORRESPONDING STANDARD UNIT FOR ID
+  const getStandardUnit = async () => {
+    try {
+      await fetch(ingredientURL, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then((responseJson) => {
+        setSUData(responseJson.standardUnit)
+      })
     }
     catch (error) {
       console.log(error)
@@ -262,17 +288,14 @@ const AddFood = (props) => {
     }
   }
 
-  var index = getStandardUnit.findIndex(function(item) {
-    return item.key == getSelected
-  });
-
   return (
+
     <View style={{ paddingHorizontal: 20, paddingVertical: 50, flex: 1, justifyContent: 'center' }}>
 
       {/* DROPDOWN MENU FOR FOOD */}
       <SelectList
         data={ingredientData}
-        // onSelect={() => alert(selected)}
+        onSelect={getStandardUnit}
         // setSelected={setSelected}
         setSelected={setSelected}
         dropdownItemStyles={{marginHorizontal:10}}
@@ -291,8 +314,7 @@ const AddFood = (props) => {
           value={getQuantity}
           keyboardType="numeric"
         />
-        <Text>{index}</Text>
-        {/* <Text style={{ marginTop: 15 }}>{getStandardUnit[index].standardUnit}</Text> */}
+        <Text style={{ marginTop: 15 }}>{SUData}</Text>
       </View>
 
       {/* DATE */}
