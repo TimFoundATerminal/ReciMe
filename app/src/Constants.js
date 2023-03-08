@@ -2,10 +2,16 @@
 
 // Node Express backend constants
 
-  // change this (IPV4 address from ipconfig in command line)
-const IP_ADDRESS = 'xxx.xxx.xxx.xxx';
-const LOCAL_HOST_PORT = '3000';
-export const API_BASE_URL = 'http://' + IP_ADDRESS +':' + LOCAL_HOST_PORT + '/api';
+// change this (IPV4 address from ipconfig in command line)
+
+// deprecated - no longer in use as have moved backend to a static server
+const IP_ADDRESS = 'xxx.xxx.xxx.xxx'; // deprecated
+const LOCAL_HOST_PORT = '3000'; // deprecated
+export const API_BASE_URL = 'http://' + IP_ADDRESS +':' + LOCAL_HOST_PORT + '/api'; // deprecated
+
+export const API_FIXED_URL = 'https://server-eemxqqdgca-nw.a.run.app/api/'
+
+
 
 // Spoonacular API constants
 
