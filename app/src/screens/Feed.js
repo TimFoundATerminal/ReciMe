@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+// update constants you need in 'constants.js' file
+import * as Constants from "../Constants";
 import {
   Text,
   View,
   ScrollView,
   Image,
-  StyleSheet,
-  Modal,
   Pressable,
   ImageBackground,
   TouchableOpacity,
@@ -18,19 +18,43 @@ export default function Feed({ navigation }) {
   const [filterVisible, setFilterVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const recipes = require("../test-data/maximise-ingredients-recipes.json");
+  // const backupRecipes = require("../test-data/maximise-ingredients-recipes.json");
 
-  const styles = StyleSheet.create({
-    imageProfile: {
-      width: 200,
-      height: 100,
-    },
-    innerFrame: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(0, 0, 0, .5)",
-    },
+  // Ingredients list separated by ,+
+
+  const [loading, setLoaing] = useState(true);
+  const [recipes, setRecipes] = useState([]);
+
+  // change this (IPV4 address from ipconfig in command line)
+  const pantryCallURL = Constants.API_BASE_URL + `/pantry`;
+
+  useEffect(() => {
+    fetch(pantryCallURL, { method: "GET" })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((pantryData) => {
+        const ingredients = pantryData.map((pantryItem) => pantryItem.name);
+        const spoonacularAPICall = Constants.getSpoonacularAPICall(ingredients);
+
+        // make API call
+        fetch(spoonacularAPICall)
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error("Network response was not ok.");
+          })
+          .then((recipes) => {
+            setRecipes(recipes);
+            setLoaing(false);
+          })
+          .catch((error) => console.error("Error:", error));
+      })
+      .catch((error) => console.error("Error:", error));
   });
 
   return (
@@ -51,6 +75,8 @@ export default function Feed({ navigation }) {
       )}
 
       <ScrollView>
+        {!loading ?? <Text>Loading...</Text>}
+
         {recipes.map((recipe) => (
           <View key={recipe.id} style={tw`relative p-4`}>
             <RecipePreview
