@@ -23,6 +23,9 @@ const swaggerDefinition = {
       {
         name: 'Waste',
         description: 'Waste endpoints for handling food thrown away'
+      },
+      {
+        name: 'Reset',
       }
     ],
     components: {
