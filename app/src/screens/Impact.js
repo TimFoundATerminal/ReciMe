@@ -1,12 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Button, SafeAreaView, Text, Dimensions, View, Pressable, StatusBar, Platform } from "react-native";
 import { LineChart, BarChart, PieChart, ProgressChart, ContributionGraph, StackedBarChart } from "react-native-chart-kit";
 import tw from 'twrnc';
+import * as Constants from '../Constants';
 
 export default function Impact() {
-  const screenWidth = Dimensions.get('window').width;
+  
+  const [loading, setLoaing] = useState(true)
+  const [recipes, setRecipes] = useState([])
 
+  // formats dates into API request format
+  function buildWasteFilter(dateAfter, dateBefore) {
+    return `?dateBefore=${dateBefore}&datefter=${dateAfter}`
+  }
+
+  // change this (IPV4 address from ipconfig in constants file)
+  const wasteBaseURL = Constants.API_FIXED_URL + `/waste`
+
+  //get request to API to get waste data
+  function apiWasteCall(wasteURL) {
+    useEffect(() => {
+      fetch(wasteURL, { method: "GET" })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Network response was not ok.');
+        })
+        .then(pantryData => {
+          // insert functionality to handle API call here
+          console.log(pantryData)
+        })
+        .catch(error => console.error('Error:', error));
+    })
+  }
+
+  // get the screenwidth for all components
+  const screenWidth = Dimensions.get('window').width;
+  
+  // sudo testing data
   let weekData = [12, 17, 8, 14, 21, 3, 15];
   let weekLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   let monthData = [12, 17, 8, 14];
@@ -15,11 +48,10 @@ export default function Impact() {
   
   let pressedView = 0;
   
-  // let numberOfWeeksAgo = 0;
-  
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
   
+  // setup hook states
   const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
@@ -49,10 +81,21 @@ export default function Impact() {
   }
 
   const previousWeek = () => {
+    // updates all related components to the previous week
     const update = numberOfWeeksAgo + 1; 
     setNumberOfWeeksAgo(update);
     updateWeekColor(getNextWeekColor(update));
     const dateObj = getWeekDays(update);
+
+    // remove slashes anc convert to integer
+    const afterDate = parseInt(dateObj.startDate.replace(/\D/g, ''))
+    const beforeDate = parseInt(dateObj.endDate.replace(/\D/g, ''))
+
+    // fetch waste data from server
+    const completeURL = wasteBaseURL + buildWasteFilter(afterDate, beforeDate);
+    apiWasteCall(completeURL);
+
+    // update graph based on the data
     updateGraph(createGraphObj(dateObj.week, weekData));
     updateWeekStartDate(dateObj.startDate);
     updateWeekendDate(dateObj.endDate);
@@ -60,6 +103,7 @@ export default function Impact() {
   }
 
   const nextWeek = () => {
+    // updates all related components to the next week
     if (numberOfWeeksAgo <= 0) { return; }
     const update = numberOfWeeksAgo - 1; 
     setNumberOfWeeksAgo(update);
@@ -76,6 +120,7 @@ export default function Impact() {
     for (let i = 0; i < 7; i++) {
       weekDays[i] = moment().subtract(i, 'days').format('ddd');
     }
+    weekDays.reverse()
     return {
       startDate: moment().subtract((numberOfWeeksAgo * 7) + 6, 'days').format('L'), 
       endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('L'), 
