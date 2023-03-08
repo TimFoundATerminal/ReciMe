@@ -10,31 +10,58 @@ export default function Impact() {
   const [loading, setLoaing] = useState(true)
   const [recipes, setRecipes] = useState([])
 
-  // formats dates into API request format
-  function buildWasteFilter(dateAfter, dateBefore) {
-    return `?dateBefore=${dateBefore}&datefter=${dateAfter}`
-  }
+  // API call in hook
+  let getWasteData = (update, dateObj) => {
+    // build api request
+    let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
+    if (dateObj.startDate != null) {
+      wasteApiUrl += `dateAfter=${dateObj.startDate}&`
+    }
+    if (dateObj.endDate != null) {
+      wasteApiUrl += `dateBefore=${dateObj.endDate}&`
+    }
+
+    // fetch with API request
+    fetch(wasteApiUrl, { method: "GET" })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('Network response was not ok.');
+    })
+      .then(pantryData => {
+        // process the return data
+        let wasteWeekData = new Array(7).fill(0.0);
+        const startDate = moment(dateObj.startDate, "YYYYMMDD")
+        // loop through all waste items and sum on dates
+        for (let i = 0; i < pantryData.length; i++) {
+          const wasteItem = pantryData[i]
+          const wasteDate = moment(wasteItem.dateThrownAway, "YYYYMMDD")
+          const daysFromWeekStart = parseInt(wasteDate.diff(startDate, 'days'))
+          wasteWeekData[daysFromWeekStart] += parseFloat(wasteItem.carbonWasted)
+        }
+        // update interface with new data
+        setNumberOfWeeksAgo(update);
+        updateWeekColor(getNextWeekColor(update));
+        updateGraph(createGraphObj(dateObj.week, wasteWeekData));
+        updateWeekStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
+        updateWeekendDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
+      })
+      .catch(error => {
+        // will log and show error prompt to user
+        console.error('Error:', error)
+        Alert.alert('Network Error', 'Please check your internet connection and try again', [
+          {
+            text: 'OK', 
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ]);
+      });
+  };
 
   // change this (IPV4 address from ipconfig in constants file)
   const wasteBaseURL = Constants.API_FIXED_URL + `/waste`
-
-  //get request to API to get waste data
-  function apiWasteCall(wasteURL) {
-    useEffect(() => {
-      fetch(wasteURL, { method: "GET" })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error('Network response was not ok.');
-        })
-        .then(pantryData => {
-          // insert functionality to handle API call here
-          console.log(pantryData)
-        })
-        .catch(error => console.error('Error:', error));
-    })
-  }
 
   // get the screenwidth for all components
   const screenWidth = Dimensions.get('window').width;
@@ -45,7 +72,6 @@ export default function Impact() {
   let monthData = [12, 17, 8, 14];
   let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
   let weekObj = getWeekDays(0);
-  
   let pressedView = 0;
   
   const switchActiveColor = "bg-green-700";
@@ -83,36 +109,20 @@ export default function Impact() {
   const previousWeek = () => {
     // updates all related components to the previous week
     const update = numberOfWeeksAgo + 1; 
-    setNumberOfWeeksAgo(update);
-    updateWeekColor(getNextWeekColor(update));
     const dateObj = getWeekDays(update);
-
-    // remove slashes anc convert to integer
-    const afterDate = parseInt(dateObj.startDate.replace(/\D/g, ''))
-    const beforeDate = parseInt(dateObj.endDate.replace(/\D/g, ''))
-
-    // fetch waste data from server
-    const completeURL = wasteBaseURL + buildWasteFilter(afterDate, beforeDate);
-    apiWasteCall(completeURL);
-
-    // update graph based on the data
-    updateGraph(createGraphObj(dateObj.week, weekData));
-    updateWeekStartDate(dateObj.startDate);
-    updateWeekendDate(dateObj.endDate);
-    console.log(update);
+    
+    // fetch waste data from server and update interface
+    getWasteData(update, dateObj);
   }
 
   const nextWeek = () => {
     // updates all related components to the next week
     if (numberOfWeeksAgo <= 0) { return; }
     const update = numberOfWeeksAgo - 1; 
-    setNumberOfWeeksAgo(update);
-    updateWeekColor(getNextWeekColor(update));
     const dateObj = getWeekDays(update);
-    updateGraph(createGraphObj(dateObj.week, weekData));
-    updateWeekStartDate(dateObj.startDate);
-    updateWeekendDate(dateObj.endDate);
-    console.log(update);
+
+    // fetch waste data from server and update interface
+    getWasteData(update, dateObj);
   }
 
   function getWeekDays(numberOfWeeksAgo) {
@@ -122,8 +132,8 @@ export default function Impact() {
     }
     weekDays.reverse()
     return {
-      startDate: moment().subtract((numberOfWeeksAgo * 7) + 6, 'days').format('L'), 
-      endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('L'), 
+      startDate: moment().subtract((numberOfWeeksAgo * 7) + 6, 'days').format('YYYYMMDD'), 
+      endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('YYYYMMDD'), 
       week: weekDays
     };
   }
