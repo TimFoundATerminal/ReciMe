@@ -1,13 +1,11 @@
 const db = require('better-sqlite3')('db.sqlite');
-const path = require('path');
-// const db = new sqlite(path.resolve('db.sqlite'), {fileMustExist: true});
 
 function query(sql, params) {
   return db.prepare(sql).all(params);
 }
 
 function queryRow(sql, id) {
-  data = db.prepare(sql).get(id)
+  var data = db.prepare(sql).get(id)
   return (!data ? {} : data);
 }
 

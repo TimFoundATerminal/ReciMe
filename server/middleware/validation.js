@@ -1,7 +1,5 @@
 const {validationResult} = require('express-validator');
 const ingredientModel = require('../models/ingredients');
-const pantryModel = require('../models/pantry');
-const wasteModel = require('../models/waste');
 
 function handleValidator(req, res, next) {
     const errors = validationResult(req);

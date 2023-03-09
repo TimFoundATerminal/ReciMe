@@ -34,17 +34,17 @@ function updateItem(id, body) {
         error.statusCode = 400;
         throw error;
     }
-    sqlStatement = 'UPDATE pantry SET '
+    var sqlStatement = 'UPDATE pantry SET '
     for (const key in body) {
         sqlStatement = sqlStatement + key.toString() + ' = ?'
         if (key === Object.keys(body)[Object.keys(body).length - 1]) {
-            sqlStatement = sqlStatement + ' ';;
+            sqlStatement = sqlStatement + ' ';
         } else {
             sqlStatement = sqlStatement + ', ';
         }
     }
     sqlStatement = sqlStatement + 'WHERE itemID = ?'
-    vals = Object.values(body);
+    var vals = Object.values(body);
     vals.push(id);
     const result = db.run(sqlStatement, vals);
     return {message:db.validateChanges(result, 'Pantry item updated successfully', 'Error updating pantry item')};

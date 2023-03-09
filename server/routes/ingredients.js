@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ingredientsModel = require('../models/ingredients')
-const {param, body, validationResult} = require('express-validator')
+const {param, body} = require('express-validator')
 const {handleValidator} = require('../middleware/validation')
 
 /**

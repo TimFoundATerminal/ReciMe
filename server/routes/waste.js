@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const wasteModel = require('../models/waste')
-const {param, body, query, validationResult} = require('express-validator')
+const {param, body, query} = require('express-validator')
 const {handleValidator, ingredientExists} = require('../middleware/validation')
 
 /**
@@ -41,8 +41,8 @@ query('dateAfter').isInt().optional(),
 handleValidator,
 router.get('/', function(req, res, next) {
     try {
-      dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
-      dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
+      var dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
+      var dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
         res.status(200).json(wasteModel.getAll(dateBefore, dateAfter));
       } catch(err) {
         next(err);
@@ -88,8 +88,8 @@ query('dateAfter').isInt().optional(),
 handleValidator,
 router.get('/carbonTotal', function(req, res, next) {
     try {
-      dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
-      dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
+      var dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
+      var dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
         res.status(200).json(wasteModel.sumCarbon(dateBefore, dateAfter));
       } catch(err) {
         next(err);

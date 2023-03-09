@@ -25,7 +25,7 @@ app.use(function(req, res) {
     res.status(404).send({message: 'Resource not found'});
 });
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     err.statusCode = err.statusCode || 400;
     err.message = err.message || "Internal Server Error";
     res.status(err.statusCode).json({

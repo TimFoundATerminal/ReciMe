@@ -17,7 +17,7 @@ function getLog(id) {
 }
 
 function createLog(wasteObj) {
-    carbonPerUnit = ingredientModel.getIngredient(wasteObj.ingredientID).carbonPerUnit
+    const carbonPerUnit = ingredientModel.getIngredient(wasteObj.ingredientID).carbonPerUnit
     wasteObj.carbonWasted = (wasteObj.quantity * carbonPerUnit).toFixed(2)
     const result = db.run(
         'INSERT INTO waste (ingredientID, dateThrownAway, quantity, carbonWasted) \
