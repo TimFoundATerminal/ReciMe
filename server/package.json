@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "test": "jest"
+    "test": "jest --forceExit",
+    "pretest": "node factory.js"
   },
   "dependencies": {
     "better-sqlite3": "^8.1.0",
