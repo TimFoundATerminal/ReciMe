@@ -13,6 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.5.5",
     "expo": "~47.0.12",
     "expo-status-bar": "~1.4.2",
+    "moment": "^2.29.4",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-native": "0.70.5",
