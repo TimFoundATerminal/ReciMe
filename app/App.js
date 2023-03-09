@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Instructions from "./src/screens/Instructions";
 import Feed from "./src/screens/Feed";
 import Pantry from "./src/screens/Pantry";
 import Blacklist from "./src/screens/Blacklist";
@@ -10,6 +12,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Foundation from "react-native-vector-icons/Foundation";
 
+
+const FeedStack = createNativeStackNavigator();
+
+function FeedStackScreen() {
+  return (
+    <FeedStack.Navigator options={{headerShown: false}} >
+      <FeedStack.Screen name="Feed" component={Feed}  />
+      <FeedStack.Screen name="Instructions" component={Instructions} />
+    </FeedStack.Navigator>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -17,9 +31,10 @@ export default function App() {
     <NavigationContainer>
       <Tab.Navigator initialRouteName="Feed">
         <Tab.Screen
-          name="Feed"
-          component={Feed}
+          name="FeedStack"
+          component={FeedStackScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="ios-list" color={color} size={size} />
             ),
@@ -65,12 +80,3 @@ export default function App() {
     </NavigationContainer>
   ); //feed, pantry, impact, blacklist
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });
