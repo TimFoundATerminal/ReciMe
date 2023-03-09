@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const pantryModel = require('../models/pantry')
-const {param, body} = require('express-validator')
-const {handleValidator, ingredientExists} = require('../middleware/validation')
+const { param, body } = require('express-validator')
+const { handleValidator, ingredientExists } = require('../middleware/validation')
 
 /**
  * @swagger
@@ -11,7 +11,7 @@ const {handleValidator, ingredientExists} = require('../middleware/validation')
  *     tags:
  *       - Pantry
  *     summary: Retrieve all pantry items
- *     description: Retrieve all items from the pantry. 
+ *     description: Retrieve all items from the pantry.
  *     responses:
  *       '200':
  *         description: Successful operation
@@ -21,15 +21,15 @@ const {handleValidator, ingredientExists} = require('../middleware/validation')
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/pantry'
- *               
+ *
 */
-router.get('/', function(req, res, next) {
-    try {
-        res.status(200).json(pantryModel.getAll());
-      } catch(err) {
-        next(err);
-      }
-  });
+router.get('/', function (req, res, next) {
+  try {
+    res.status(200).json(pantryModel.getAll())
+  } catch (err) {
+    next(err)
+  }
+})
 
 /**
  * @swagger
@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
  *   get:
  *     tags:
  *       - Pantry
- *     summary: Retrieve a specific item 
+ *     summary: Retrieve a specific item
  *     parameters:
  *       - name: itemID
  *         in: path
@@ -53,16 +53,16 @@ router.get('/', function(req, res, next) {
  *             schema:
  *                $ref: '#/components/schemas/pantry'
  *       '400':
- *          description: Invalid ID  
- *           
+ *          description: Invalid ID
+ *
 */
-router.get('/:itemID', param('itemID').isInt(),handleValidator,function(req, res, next) {
-    try {
-        res.status(200).json(pantryModel.getItem(req.params.itemID));
-      } catch(err) {
-        next(err);
-      }
-  });
+router.get('/:itemID', param('itemID').isInt(), handleValidator, function (req, res, next) {
+  try {
+    res.status(200).json(pantryModel.getItem(req.params.itemID))
+  } catch (err) {
+    next(err)
+  }
+})
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.get('/:itemID', param('itemID').isInt(),handleValidator,function(req, res
  *   delete:
  *     tags:
  *       - Pantry
- *     summary: Delete a specific item 
+ *     summary: Delete a specific item
  *     description: Deletes a specific pantry item
  *     parameters:
  *       - name: itemID
@@ -85,15 +85,15 @@ router.get('/:itemID', param('itemID').isInt(),handleValidator,function(req, res
  *         content:
  *       '400':
  *          description: Invalid
- *           
+ *
 */
-router.delete('/:itemID', param('itemID').isInt(),handleValidator,function(req, res, next) {
-      try {
-          res.status(200).json(pantryModel.deleteItem(req.params.itemID));
-      } catch(err) {
-      next(err);
-      }
-  });
+router.delete('/:itemID', param('itemID').isInt(), handleValidator, function (req, res, next) {
+  try {
+    res.status(200).json(pantryModel.deleteItem(req.params.itemID))
+  } catch (err) {
+    next(err)
+  }
+})
 
 /**
  * @swagger
@@ -101,7 +101,7 @@ router.delete('/:itemID', param('itemID').isInt(),handleValidator,function(req, 
  *   post:
  *     tags:
  *       - Pantry
- *     summary: Add a new pantry item 
+ *     summary: Add a new pantry item
  *     requestBody:
  *       content:
  *         application/json:
@@ -109,33 +109,33 @@ router.delete('/:itemID', param('itemID').isInt(),handleValidator,function(req, 
  *             $ref: '#/components/schemas/pantryPost'
  *     responses:
  *       '200':
- *         description: Successful operation  
+ *         description: Successful operation
  *       '400':
  *          description: Invalid request body
- *           
+ *
 */
-  router.post('/', 
-    body('ingredientID').isInt().exists(), 
-    body('quantity').isFloat().exists(), 
-    body('dateExpiry').isInt().exists(),
-    body('frozen').isInt({min:0, max:1}).exists(),
-    handleValidator, 
-    ingredientExists,
-    function(req, res, next) {
-      try {
-          res.status(200).json(pantryModel.createItem(req.body));
-      } catch(err) {
-      next(err);
-      }
-  });
+router.post('/',
+  body('ingredientID').isInt().exists(),
+  body('quantity').isFloat().exists(),
+  body('dateExpiry').isInt().exists(),
+  body('frozen').isInt({ min: 0, max: 1 }).exists(),
+  handleValidator,
+  ingredientExists,
+  function (req, res, next) {
+    try {
+      res.status(200).json(pantryModel.createItem(req.body))
+    } catch (err) {
+      next(err)
+    }
+  })
 
-    /**
+/**
  * @swagger
  * /pantry/{itemID}:
  *   put:
  *     tags:
  *       - Pantry
- *     summary: Update a specific item 
+ *     summary: Update a specific item
  *     description: Note only one or more of the properties is required.
  *     parameters:
  *       - name: itemID
@@ -153,23 +153,22 @@ router.delete('/:itemID', param('itemID').isInt(),handleValidator,function(req, 
  *       '200':
  *         description: Successful operation
  *       '400':
- *          description: Invalid ID or request body              
- *           
+ *          description: Invalid ID or request body
+ *
 */
-router.put('/:itemID', 
-    param('itemID').isInt().optional(),
-    body('ingredientID').isInt().optional(), 
-    body('quantity').isFloat().optional(), 
-    body('dateExpiry').isInt().optional(),
-    body('frozen').isInt({min:0, max:1}).optional(), 
-    handleValidator,
-    function(req, res, next) {
-        try {
-            res.status(200).json(pantryModel.updateItem(req.params.itemID, req.body));
-        } catch(err) {
-            next(err);
-        }
-  });
+router.put('/:itemID',
+  param('itemID').isInt().optional(),
+  body('ingredientID').isInt().optional(),
+  body('quantity').isFloat().optional(),
+  body('dateExpiry').isInt().optional(),
+  body('frozen').isInt({ min: 0, max: 1 }).optional(),
+  handleValidator,
+  function (req, res, next) {
+    try {
+      res.status(200).json(pantryModel.updateItem(req.params.itemID, req.body))
+    } catch (err) {
+      next(err)
+    }
+  })
 
-  module.exports = router;
-  
+module.exports = router

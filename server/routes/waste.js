@@ -1,8 +1,8 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 const wasteModel = require('../models/waste')
-const {param, body, query} = require('express-validator')
-const {handleValidator, ingredientExists} = require('../middleware/validation')
+const { param, body, query } = require('express-validator')
+const { handleValidator, ingredientExists } = require('../middleware/validation')
 
 /**
  * @swagger
@@ -11,7 +11,7 @@ const {handleValidator, ingredientExists} = require('../middleware/validation')
  *     tags:
  *       - Waste
  *     summary: Retrieve all waste
- *     description: Retrieve all the waste logs 
+ *     description: Retrieve all the waste logs
  *     parameters:
  *       - name: dateBefore
  *         in: query
@@ -34,20 +34,21 @@ const {handleValidator, ingredientExists} = require('../middleware/validation')
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/waste'
- *               
+ *
 */
-query('dateBefore').isInt().optional(),
-query('dateAfter').isInt().optional(),
-handleValidator,
-router.get('/', function(req, res, next) {
+router.get('/',
+  query('dateBefore').isInt().optional(),
+  query('dateAfter').isInt().optional(),
+  handleValidator,
+  function (req, res, next) {
     try {
-      var dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
-      var dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
-        res.status(200).json(wasteModel.getAll(dateBefore, dateAfter));
-      } catch(err) {
-        next(err);
-      }
-  });
+      const dateBefore = 'dateBefore' in req.query ? req.query.dateBefore : 99999999
+      const dateAfter = 'dateAfter' in req.query ? req.query.dateAfter : 0
+      res.status(200).json(wasteModel.getAll(dateBefore, dateAfter))
+    } catch (err) {
+      next(err)
+    }
+  })
 
 /**
  * @swagger
@@ -81,28 +82,29 @@ router.get('/', function(req, res, next) {
  *                 total:
  *                   type: float
  *                   example: 47.5
- *                                 
+ *
 */
-query('dateBefore').isInt().optional(),
-query('dateAfter').isInt().optional(),
-handleValidator,
-router.get('/carbonTotal', function(req, res, next) {
-    try {
-      var dateBefore = 'dateBefore' in req.query ? req.query.dateBefore: 99999999
-      var dateAfter = 'dateAfter' in req.query ? req.query.dateAfter: 0
-        res.status(200).json(wasteModel.sumCarbon(dateBefore, dateAfter));
-      } catch(err) {
-        next(err);
-      }
-  });
 
-  /**
+router.get('/carbonTotal',
+  query('dateBefore').isInt().optional(),
+  query('dateAfter').isInt().optional(),
+  handleValidator, function (req, res, next) {
+    try {
+      const dateBefore = 'dateBefore' in req.query ? req.query.dateBefore : 99999999
+      const dateAfter = 'dateAfter' in req.query ? req.query.dateAfter : 0
+      res.status(200).json(wasteModel.sumCarbon(dateBefore, dateAfter))
+    } catch (err) {
+      next(err)
+    }
+  })
+
+/**
  * @swagger
  * /waste/{wasteID}:
  *   get:
  *     tags:
  *       - Waste
- *     summary: Retrieve a specific waste log 
+ *     summary: Retrieve a specific waste log
  *     parameters:
  *       - name: wasteID
  *         in: path
@@ -118,24 +120,24 @@ router.get('/carbonTotal', function(req, res, next) {
  *             schema:
  *                $ref: '#/components/schemas/waste'
  *       '400':
- *          description: Invalid ID  
- *           
+ *          description: Invalid ID
+ *
 */
-router.get('/:wasteID', param('wasteID').isInt(),handleValidator,function(req, res, next) {
-    try {
-        res.status(200).json(wasteModel.getLog(req.params.wasteID));
-      } catch(err) {
-        next(err);
-      }
-  });
+router.get('/:wasteID', param('wasteID').isInt(), handleValidator, function (req, res, next) {
+  try {
+    res.status(200).json(wasteModel.getLog(req.params.wasteID))
+  } catch (err) {
+    next(err)
+  }
+})
 
-  /**
+/**
  * @swagger
  * /waste:
  *   post:
  *     tags:
  *       - Waste
- *     summary: Add a new waste log 
+ *     summary: Add a new waste log
  *     requestBody:
  *       content:
  *         application/json:
@@ -143,24 +145,24 @@ router.get('/:wasteID', param('wasteID').isInt(),handleValidator,function(req, r
  *             $ref: '#/components/schemas/wastePost'
  *     responses:
  *       '200':
- *         description: Successful operation  
+ *         description: Successful operation
  *       '400':
  *          description: Invalid request body
- *           
+ *
 */
-router.post('/', 
-body('ingredientID').isInt().exists(),
-body('dateThrownAway').isInt().exists(),
-body('quantity').isFloat().exists(),
-handleValidator,
-ingredientExists,
-function(req, res, next) {
+router.post('/',
+  body('ingredientID').isInt().exists(),
+  body('dateThrownAway').isInt().exists(),
+  body('quantity').isFloat().exists(),
+  handleValidator,
+  ingredientExists,
+  function (req, res, next) {
     try {
-        res.status(200).json(wasteModel.createLog(req.body));
-    } catch(err) {
-    next(err);
+      res.status(200).json(wasteModel.createLog(req.body))
+    } catch (err) {
+      next(err)
     }
-});
+  })
 
 /**
  * @swagger
@@ -168,7 +170,7 @@ function(req, res, next) {
  *   delete:
  *     tags:
  *       - Waste
- *     summary: Delete a specific waste log 
+ *     summary: Delete a specific waste log
  *     parameters:
  *       - name: wasteID
  *         in: path
@@ -182,14 +184,14 @@ function(req, res, next) {
  *         content:
  *       '400':
  *          description: Invalid ID
- *           
+ *
 */
-router.delete('/:wasteID', param('wasteID').isInt(),handleValidator,function(req, res, next) {
-      try {
-          res.status(200).json(wasteModel.deleteLog(req.params.wasteID));
-      } catch(err) {
-      next(err);
-      }
-  });
+router.delete('/:wasteID', param('wasteID').isInt(), handleValidator, function (req, res, next) {
+  try {
+    res.status(200).json(wasteModel.deleteLog(req.params.wasteID))
+  } catch (err) {
+    next(err)
+  }
+})
 
-module.exports = router;
+module.exports = router
