@@ -1,12 +1,6 @@
 const request = require('supertest')
 const app = require('../../app')
 
-/*
----------------------------
-Test /ingredients endpoints
----------------------------
-*/
-
 describe('Get /ingredients', () => {
   it('should get all ingredients', async () => {
     const res = await request(app)
@@ -17,7 +11,7 @@ describe('Get /ingredients', () => {
 })
 
 describe('Get /ingredients/{id}', () => {
-    it('should get all ingredients', async () => {
+    it('should get specific ingredient', async () => {
       const res = await request(app)
         .get('/api/ingredients/1')
       expect(res.statusCode).toEqual(200)
