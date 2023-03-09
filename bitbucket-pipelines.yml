@@ -9,7 +9,16 @@ pipelines:
   default:
     - parallel:
         - step:
-            name: Server Code linting
+            name: Build and Test
+            caches:
+              - node
+            script:
+              - cd server
+              - npm install
+              - node factory
+              - npm test
+        - step:
+            name: Code linting
             script:
               - cd server
               - npm install eslint
