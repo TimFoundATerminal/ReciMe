@@ -31,6 +31,7 @@ export default function Impact() {
   const [weekEndDate, updateWeekendDate] = useState(moment(weekObj.endDate, "YYYYMMDD").format('L'));
   const [nextWeekColor, updateWeekColor] = useState(switchInactiveColor);
   const [weekButtonsShow, setWeekButtonsVisability] = useState("");
+  const [monthDataObj, setMonthData] = useState();
 
 
 
@@ -86,14 +87,15 @@ export default function Impact() {
   };
 
   // API call to the remote backend for the data
-  let getWasteMonthData = (update, dateObj) => {
+  let getWasteMonthData = () => {
     // build api request
+    const monthsObj = getMonthSpan();
     let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
-    if (dateObj.startDate != null) {
-      wasteApiUrl += `dateAfter=${dateObj.startDate}&`
+    if (monthsObj.startDate != null) {
+      wasteApiUrl += `dateAfter=${monthsObj.startDate}&`
     }
-    if (dateObj.endDate != null) {
-      wasteApiUrl += `dateBefore=${dateObj.endDate}&`
+    if (monthsObj.endDate != null) {
+      wasteApiUrl += `dateBefore=${monthsObj.endDate}&`
     }
 
     // fetch with API request
@@ -105,23 +107,10 @@ export default function Impact() {
       throw new Error('Network response was not ok.');
     })
       .then(pantryData => {
-        // process the return data
+        // process the return data into months and sum carbon wasted
+        console.log(pantryData)
         let wasteMonthData = new Array(6).fill(0.0);
-        const startDate = moment(dateObj.startDate, "YYYYMMDD")
-        // loop through all waste items and sum on dates
-        for (let i = 0; i < pantryData.length; i++) {
-          const wasteItem = pantryData[i]
-          const wasteDate = moment(wasteItem.dateThrownAway, "YYYYMMDD")
-          const daysFromWeekStart = parseInt(wasteDate.diff(startDate, 'days'))
-          wasteWeekData[daysFromWeekStart] += parseFloat(wasteItem.carbonWasted)
-        }
-        // update interface with new data
-        setNumberOfWeeksAgo(update);
-        updateWeekColor(getNextWeekColor(update));
-        updateGraph(createGraphObj(dateObj.week, wasteWeekData));
-        updateWeekStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
-        updateWeekendDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
-        setLoading(false);
+        // TODO create date ranges and sum accross those ranges into wasteMonthData
       })
       .catch(error => {
         // will log and show error prompt to user
@@ -139,6 +128,11 @@ export default function Impact() {
   // updates page when first loaded
   useEffect(() => {
     getWasteWeekData(0, getWeekDays(0));
+  }, []);
+
+  // updates monthData in the background
+  useEffect(() => {
+    getWasteMonthData();
   }, []);
 
   function createGraphObj(labels, data) {
@@ -191,6 +185,20 @@ export default function Impact() {
       startDate: moment().subtract((numberOfWeeksAgo * 7) + 6, 'days').format('YYYYMMDD'), 
       endDate: moment().subtract(numberOfWeeksAgo * 7, 'days').format('YYYYMMDD'), 
       week: weekDays
+    };
+  }
+
+  function getMonthSpan() {
+    let months = new Array(6);
+    for (let i = 0; i < months.length; i++) {
+      months[i] = moment().subtract(i, 'months').format('MMM');
+    }
+    months.reverse()
+    console.log(months)
+    return {
+      startDate: moment().startOf('month').subtract(5, 'months').format('YYYYMMDD'), 
+      endDate: moment().endOf('month').format('YYYYMMDD'), 
+      months: months
     };
   }
 
