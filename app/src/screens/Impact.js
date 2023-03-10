@@ -16,7 +16,7 @@ export default function Impact() {
   // updates when the page has finished loading
   const [loading, setLoading] = useState(true);
   
-  // setup hook states
+  // setup graph hook states
   let weekObj = getWeekDays(0);
   const [pressedView, setPressedView] = useState(0);
   const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
@@ -31,6 +31,11 @@ export default function Impact() {
   const [monthsStartDate, setMonthsStartDate] = useState();
   const [monthsEndDate, setMonthsEndDate] = useState();
 
+  // setup insights hook states
+  const [insightName, setInsightName] = useState();
+  const [insightQuantity, setInsightQuantity] = useState();
+  const [insightUnit, setInsightUnit] = useState();
+  const [insightcarbonPercentage, setInsightcarbonPercentage] = useState();
 
   // API call to the remote backend for the data
   let getWasteWeekData = (update, dateObj) => {
@@ -156,10 +161,14 @@ export default function Impact() {
         }
         
         console.log(ingredientName)
+        setInsightName(ingredientName)
         console.log(quantityWaste)
+        setInsightQuantity(quantityWaste)
         console.log(ingredientUnit)
-        console.log(carbonWaste[ingredientId])
-        console.log(totalCarbonWasted)
+        setInsightUnit(ingredientUnit)
+        const carbonPercentage = parseInt(100*(carbonWaste[ingredientId]/totalCarbonWasted))
+        console.log(carbonPercentage)
+        setInsightcarbonPercentage(carbonPercentage)
 
       })
       .catch(error => {
@@ -374,11 +383,11 @@ export default function Impact() {
           <View>
             <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Insights</Text>
             <Text style={tw`bg-white pt-3 pl-3 pr-3`}>
-            Your biggest contributor to your carbon footprint was wasted 'Chicken'.
+            Your biggest contributor to your carbon footprint was wasted {insightName}.
             </Text>
             <Text style={tw`bg-white p-3`}>
-            Where in the last 6 months you have throw away 'x' 'kg' which makes
-            up around '55'% of your total waste.
+            Where in the last 6 months you have throw away {insightQuantity} {insightUnit} which makes
+            up around {insightcarbonPercentage}% of your total waste.
             </Text>
           </View>
         </View>
