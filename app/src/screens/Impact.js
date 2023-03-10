@@ -11,19 +11,18 @@ export default function Impact() {
   const screenWidth = Dimensions.get('window').width;
   
   // sudo testing data
-  let weekData = [12, 17, 8, 14, 21, 3, 15];
   let monthData = [12, 17, 8, 14];
   let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
   let weekObj = getWeekDays(0);
-  let pressedView = 0;
   
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
-
+  
   // updates when the page has finished loading
   const [loading, setLoading] = useState(true);
   
   // setup hook states
+  const [pressedView, setPressedView] = useState(0);
   const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
@@ -33,8 +32,10 @@ export default function Impact() {
   const [nextWeekColor, updateWeekColor] = useState(switchInactiveColor);
   const [weekButtonsShow, setWeekButtonsVisability] = useState("");
 
-  // API call in hook
-  let getWasteData = (update, dateObj) => {
+
+
+  // API call to the remote backend for the data
+  let getWasteWeekData = (update, dateObj) => {
     // build api request
     let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
     if (dateObj.startDate != null) {
@@ -86,8 +87,7 @@ export default function Impact() {
 
   // updates page when first loaded
   useEffect(() => {
-    console.log("this ran")
-    getWasteData(0, getWeekDays(0));
+    getWasteWeekData(0, getWeekDays(0));
   }, []);
 
   function createGraphObj(labels, data) {
@@ -117,7 +117,7 @@ export default function Impact() {
     const dateObj = getWeekDays(update);
     
     // fetch waste data from server and update interface
-    getWasteData(update, dateObj);
+    getWasteWeekData(update, dateObj);
   }
 
   const nextWeek = () => {
@@ -127,7 +127,7 @@ export default function Impact() {
     const dateObj = getWeekDays(update);
 
     // fetch waste data from server and update interface
-    getWasteData(update, dateObj);
+    getWasteWeekData(update, dateObj);
   }
 
   function getWeekDays(numberOfWeeksAgo) {
@@ -159,26 +159,32 @@ export default function Impact() {
 
   const weekClickHandler = () => {
     // updates the switch button
-    pressedView = 0;
+    if (pressedView == 0) {
+      console.log(pressedView)
+      return
+    }
+    setPressedView(0);
     setWeekViewColor(switchActiveColor);
     setMonthViewColor(switchInactiveColor);
     setWeekButtonsVisability("");
 
     // updates the graph with respect to the week the user was looking at before
-    getWasteData(numberOfWeeksAgo, getWeekDays(numberOfWeeksAgo));
-    console.log(pressedView);
-
-    console.log(pressedView);
+    getWasteWeekData(numberOfWeeksAgo, getWeekDays(numberOfWeeksAgo));
   }
 
   const monthClickHandler = () => {
     // updates the switch button
-    pressedView = 1;
+    if (pressedView == 1) {
+      console.log(pressedView)
+      return
+    }
+    setPressedView(1);
     setWeekViewColor(switchInactiveColor);
     setMonthViewColor(switchActiveColor);
     setWeekButtonsVisability("hidden");
+
+    // updates the graph with the month data
     updateGraph(createGraphObj(monthLabels, monthData))
-    console.log(pressedView);
   }
 
   return (
