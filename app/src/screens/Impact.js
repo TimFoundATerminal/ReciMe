@@ -125,6 +125,10 @@ export default function Impact() {
         setMonthsStartDate(moment(monthsObj.startDate, "YYYYMMDD").format('L'));
         setMonthsEndDate(moment(monthsObj.endDate, "YYYYMMDD").format('L'));
         setMonthGraphObj(createGraphObj(monthsObj.months, wasteMonthData))
+
+        // process data for insights
+        
+
       })
       .catch(error => {
         // will log and show error prompt to user
@@ -334,6 +338,16 @@ export default function Impact() {
                 </View>
               </Pressable>
             </View>
+          </View>
+          <View>
+            <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Insights</Text>
+            <Text style={tw`bg-white pt-3 pl-3 pr-3`}>
+            Your biggest contributor to your carbon footprint was wasted 'Chicken'.
+            </Text>
+            <Text style={tw`bg-white p-3`}>
+            Where in the last 6 months you have throw away 'x' 'kg' which makes
+            up around '55'% of your total waste.
+            </Text>
           </View>
         </View>
         )
