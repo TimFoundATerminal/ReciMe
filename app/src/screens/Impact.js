@@ -16,7 +16,8 @@ export default function Impact() {
   const switchInactiveColor = "bg-zinc-300";
   
   // updates when the page has finished loading
-  const [loading, setLoading] = useState(true);
+  const [graphLoading, setGraphLoading] = useState(true);
+  const [insightsLoading, setInsightsLoading] = useState(true);
   
   // setup graph hook states
   let weekObj = getWeekDays(0);
@@ -75,7 +76,7 @@ export default function Impact() {
         updateGraph(createGraphObj(dateObj.week, wasteWeekData));
         updateTimeframeStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
         updateTimeframeEndDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
-        setLoading(false);
+        setGraphLoading(false);
       })
       .catch(error => {
         // will log and show error prompt to user
@@ -171,6 +172,7 @@ export default function Impact() {
         const carbonPercentage = parseInt(100*(carbonWaste[ingredientId]/totalCarbonWasted))
         console.log(carbonPercentage)
         setInsightcarbonPercentage(carbonPercentage)
+        setInsightsLoading(false);
 
       })
       .catch(error => {
@@ -319,7 +321,7 @@ export default function Impact() {
 
   return (
     <SafeAreaView style={tw`flex-1`}>
-      {loading ? (
+      {(graphLoading && insightsLoading) ? (
         <View>
           <ActivityIndicator 
             size="large" 
