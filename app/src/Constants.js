@@ -11,12 +11,25 @@ export const API_BASE_URL = 'http://' + IP_ADDRESS +':' + LOCAL_HOST_PORT + '/ap
 
 export const API_FIXED_URL = 'https://server-eemxqqdgca-nw.a.run.app/api/'
 
+// Spponacular
+const API_KEY = '54385497726e4c6b9dba6f8704f480c3'
 
+// base URLs
+export const SPOONACULAR_BASE_URL = "https://api.spoonacular.com/recipes"
 
-// Spoonacular API constants
-
-const API_KEY = '7b6470073c6246c1be8039c48fe00dd4';
-
-export function getSpoonacularAPICall(ingredients) {
-    return `https://api.spoonacular.com/recipes/findByIngredients?apiKey=`+API_KEY+`&ingredients=`+ingredients+`&number=10&ranking=2`;
+export function getRecipesCall(ingredients, numberRecipes = 5) {
+    return `${SPOONACULAR_BASE_URL}/findByIngredients?apiKey=${API_KEY}&ingredients=${ingredients}&number=${numberRecipes}&ranking=2`;
 }
+
+export function getInstructionsCall(recipeId) {
+  return `${SPOONACULAR_BASE_URL}/${recipeId}/analyzedInstructions?apiKey=${API_KEY}&stepBreakdown=true`
+}
+
+export function getIngredientsPicture (recipeId) {
+  return `${SPOONACULAR_BASE_URL}/${recipeId}/ingredientWidget.png?apiKey=${API_KEY}`
+}
+
+// export function getInstructionEquipmentImage (recipeId, imageName) {
+//   console.warn(`${SPOONACULAR_BASE_URL}/${recipeId}/${imageName}?apiKey=${API_KEY}`)
+//   return `${SPOONACULAR_BASE_URL}/${recipeId}/${imageName}?apiKey=${API_KEY}`
+// }

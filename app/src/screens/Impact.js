@@ -7,7 +7,6 @@ import * as Constants from '../Constants';
 
 export default function Impact() {
   
-  
   // get the screenwidth for all components
   const screenWidth = Dimensions.get('window').width;
   

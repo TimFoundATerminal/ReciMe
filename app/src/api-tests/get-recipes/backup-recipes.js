@@ -2,10 +2,12 @@
 var fs = require('fs');
 
 // My API key
-const apiKey = "7b6470073c6246c1be8039c48fe00dd4"
+const apiKey = "54385497726e4c6b9dba6f8704f480c3"
+
+const pantryItems = [{"itemID":1,"ingredientID":1,"quantity":100,"dateExpiry":20230224,"frozen":1,"name":"Chicken Breast","standardUnit":"grams","carbonPerUnit":20},{"itemID":2,"ingredientID":2,"quantity":100,"dateExpiry":20230224,"frozen":1,"name":"tomatoes","standardUnit":"grams","carbonPerUnit":400},{"itemID":3,"ingredientID":3,"quantity":100,"dateExpiry":20230224,"frozen":1,"name":"potatoes","standardUnit":"kilos","carbonPerUnit":900}]
 
 // Ingredients list separated by ,+
-const ingredients = 'chicken,+tomatoes,+rice,+pasta,+pepper,+eggs,+cumin,+salt'
+const ingredients = pantryItems.map(pantryItem => pantryItem.name).join(',+')
 
 // ranking 2 maximises ingredients
 const url = `https://api.spoonacular.com/recipes/findByIngredients?apiKey=${apiKey}&ingredients=${ingredients}&number=10&ranking=2`

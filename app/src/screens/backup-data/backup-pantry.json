@@ -1,0 +1,32 @@
+[
+    {
+        "itemID": 1,
+        "ingredientID": 1,
+        "quantity": 100,
+        "dateExpiry": 20230224,
+        "frozen": 1,
+        "name": "Chicken Breast",
+        "standardUnit": "grams",
+        "carbonPerUnit": 20
+    },
+    {
+        "itemID": 2,
+        "ingredientID": 2,
+        "quantity": 100,
+        "dateExpiry": 20230224,
+        "frozen": 1,
+        "name": "tomatoes",
+        "standardUnit": "grams",
+        "carbonPerUnit": 400
+    },
+    {
+        "itemID": 3,
+        "ingredientID": 3,
+        "quantity": 100,
+        "dateExpiry": 20230224,
+        "frozen": 1,
+        "name": "potatoes",
+        "standardUnit": "kilos",
+        "carbonPerUnit": 900
+    }
+]
