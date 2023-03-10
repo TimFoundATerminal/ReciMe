@@ -127,7 +127,39 @@ export default function Impact() {
         setMonthGraphObj(createGraphObj(monthsObj.months, wasteMonthData))
 
         // process data for insights
+        console.log(wasteData);
+        const carbonWaste = new Object();
+        let totalCarbonWasted = 0.0;
         
+        for (let i = 0; i < wasteData.length; i++) {
+          const wasteItem = wasteData[i];
+          totalCarbonWasted += wasteItem.carbonWasted;
+          const key = wasteItem.ingredientID;
+          if (key in carbonWaste) {
+            carbonWaste[key] += wasteItem.carbonWasted;
+          } else {
+            carbonWaste[key] = wasteItem.carbonWasted;
+          }
+        }
+        const ingredientId = Object.keys(carbonWaste).reduce((a, b) => carbonWaste[a] > carbonWaste[b] ? a : b)
+        
+        let quantityWaste = 0.0;
+        let ingredientName;
+        let ingredientUnit;
+        for (let i = 0; i < wasteData.length; i++) {
+          const wasteItem = wasteData[i];
+          if (wasteItem.ingredientID == ingredientId) {
+            quantityWaste += wasteItem.quantity
+            ingredientName = wasteItem.name
+            ingredientUnit = wasteItem.standardUnit
+          }
+        }
+        
+        console.log(ingredientName)
+        console.log(quantityWaste)
+        console.log(ingredientUnit)
+        console.log(carbonWaste[ingredientId])
+        console.log(totalCarbonWasted)
 
       })
       .catch(error => {
