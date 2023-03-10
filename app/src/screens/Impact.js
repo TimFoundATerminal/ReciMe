@@ -10,11 +10,6 @@ export default function Impact() {
   // get the screenwidth for all components
   const screenWidth = Dimensions.get('window').width;
   
-  // sudo testing data
-  let monthData = [12, 17, 8, 14];
-  let monthLabels = ["Jan", "Feb", "Mar", "Apr"]
-  let weekObj = getWeekDays(0);
-  
   const switchActiveColor = "bg-green-700";
   const switchInactiveColor = "bg-zinc-300";
   
@@ -22,17 +17,19 @@ export default function Impact() {
   const [loading, setLoading] = useState(true);
   
   // setup hook states
+  let weekObj = getWeekDays(0);
   const [pressedView, setPressedView] = useState(0);
   const [numberOfWeeksAgo, setNumberOfWeeksAgo] = useState(0);
   const [weekViewColor, setWeekViewColor] = useState(switchActiveColor);
   const [monthViewColor, setMonthViewColor] = useState(switchInactiveColor);
   const [graphObj, updateGraph] = useState(createGraphObj(weekObj.week, new Array(7).fill(0.0)));
-  const [weekStartDate, updateWeekStartDate] = useState(moment(weekObj.startDate, "YYYYMMDD").format('L'));
-  const [weekEndDate, updateWeekendDate] = useState(moment(weekObj.endDate, "YYYYMMDD").format('L'));
+  const [timeframeStartDate, updateTimeframeStartDate] = useState(moment(weekObj.startDate, "YYYYMMDD").format('L'));
+  const [timeframeEndDate, updateTimeframeEndDate] = useState(moment(weekObj.endDate, "YYYYMMDD").format('L'));
   const [nextWeekColor, updateWeekColor] = useState(switchInactiveColor);
   const [weekButtonsShow, setWeekButtonsVisability] = useState("");
-  const [monthDataObj, setMonthData] = useState();
-
+  const [monthGraphObj, setMonthGraphObj] = useState();
+  const [monthsStartDate, setMonthsStartDate] = useState();
+  const [monthsEndDate, setMonthsEndDate] = useState();
 
 
   // API call to the remote backend for the data
@@ -69,8 +66,8 @@ export default function Impact() {
         setNumberOfWeeksAgo(update);
         updateWeekColor(getNextWeekColor(update));
         updateGraph(createGraphObj(dateObj.week, wasteWeekData));
-        updateWeekStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
-        updateWeekendDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
+        updateTimeframeStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
+        updateTimeframeEndDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
         setLoading(false);
       })
       .catch(error => {
@@ -106,11 +103,28 @@ export default function Impact() {
       }
       throw new Error('Network response was not ok.');
     })
-      .then(pantryData => {
+      .then(wasteData => {
         // process the return data into months and sum carbon wasted
-        console.log(pantryData)
+        let monthRanges = new Array(7);
+        // creates a range of dates to test between
+        monthRanges[0] = parseInt(moment().startOf('month').add(1,'month').format('YYYYMMDD'))
+        for (let i = 1; i < monthRanges.length; i++) {
+          monthRanges[i] = parseInt(moment().startOf('month').subtract(i-1,'months').format('YYYYMMDD'))
+        }
+        monthRanges.reverse()
+
+        // create date ranges and sum accross those ranges into wasteMonthData
         let wasteMonthData = new Array(6).fill(0.0);
-        // TODO create date ranges and sum accross those ranges into wasteMonthData
+        for (let i = 0; i < wasteData.length; i++) {
+          const wasteItem = wasteData[i];
+          const monthIndex = getMonthRangeIndex(wasteItem.dateThrownAway, monthRanges)
+          wasteMonthData[monthIndex] += wasteItem.carbonWasted
+        }
+
+        // set MonthGraphObj in state so won't require another API call
+        setMonthsStartDate(moment(monthsObj.startDate, "YYYYMMDD").format('L'));
+        setMonthsEndDate(moment(monthsObj.endDate, "YYYYMMDD").format('L'));
+        setMonthGraphObj(createGraphObj(monthsObj.months, wasteMonthData))
       })
       .catch(error => {
         // will log and show error prompt to user
@@ -134,6 +148,16 @@ export default function Impact() {
   useEffect(() => {
     getWasteMonthData();
   }, []);
+
+  // given a date and range of dates will tell you the index it lies within
+  function getMonthRangeIndex(date, dateRanges) {
+    for (let i = 0; i < dateRanges.length-1; i++) {
+      if ((dateRanges[i] <= date) && (date < dateRanges[i+1])) {
+        return i;
+      }
+    }
+    console.error("Date not in range");
+  }
 
   function createGraphObj(labels, data) {
     // builds a graph object that can be passed to the graph to display
@@ -194,7 +218,7 @@ export default function Impact() {
       months[i] = moment().subtract(i, 'months').format('MMM');
     }
     months.reverse()
-    console.log(months)
+
     return {
       startDate: moment().startOf('month').subtract(5, 'months').format('YYYYMMDD'), 
       endDate: moment().endOf('month').format('YYYYMMDD'), 
@@ -241,7 +265,9 @@ export default function Impact() {
     setWeekButtonsVisability("hidden");
 
     // updates the graph with the month data
-    updateGraph(createGraphObj(monthLabels, monthData))
+    updateGraph(monthGraphObj)
+    updateTimeframeStartDate(monthsStartDate)
+    updateTimeframeEndDate(monthsEndDate)
   }
 
   return (
@@ -257,7 +283,7 @@ export default function Impact() {
         <View>
           <View>
             <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Carbon Footprint</Text>
-            <Text style={tw`bg-white pl-3 pr-3, pt-1`}>{weekStartDate} - {weekEndDate}</Text>
+            <Text style={tw`bg-white pl-3 pr-3, pt-1`}>{timeframeStartDate} - {timeframeEndDate}</Text>
           </View>
           <View style={tw`p-3 android:pt-2 bg-white dark:bg-black`}>
           {/* Creates a basic line graph in react native */}
