@@ -10,7 +10,9 @@ export default function Impact() {
   // get the screenwidth for all components
   const screenWidth = Dimensions.get('window').width;
   
-  const switchActiveColor = "bg-green-700";
+  const baseColor = "green-700";
+  const baseErrorColor = "red-700";
+  const switchActiveColor = "bg-"+baseColor;
   const switchInactiveColor = "bg-zinc-300";
   
   // updates when the page has finished loading
@@ -383,11 +385,11 @@ export default function Impact() {
           <View>
             <Text style={tw`text-2xl pt-3 pl-3 pr-3 bg-white`}>Insights</Text>
             <Text style={tw`bg-white pt-3 pl-3 pr-3`}>
-            Your biggest contributor to your carbon footprint was wasted {insightName}.
+            Your biggest contributor to your carbon footprint was wasted <Text style={tw`text-${baseErrorColor} font-semibold`}>{insightName}</Text>.
             </Text>
             <Text style={tw`bg-white p-3`}>
-            Where in the last 6 months you have throw away {insightQuantity} {insightUnit} which makes
-            up around {insightcarbonPercentage}% of your total waste.
+            In the last 6 months you have throw away <Text style={tw`text-${baseErrorColor} font-semibold`}>{insightQuantity} {insightUnit}</Text> which makes
+            up around <Text style={tw`text-${baseErrorColor} font-semibold`}>{insightcarbonPercentage}%</Text> of your total waste.
             </Text>
           </View>
         </View>
@@ -403,5 +405,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-  }
-})
+  },
+  // innerText: {
+  //     color: switchActiveColor,
+  // },
+});
