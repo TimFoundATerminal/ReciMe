@@ -85,6 +85,57 @@ export default function Impact() {
       });
   };
 
+  // API call to the remote backend for the data
+  let getWasteMonthData = (update, dateObj) => {
+    // build api request
+    let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
+    if (dateObj.startDate != null) {
+      wasteApiUrl += `dateAfter=${dateObj.startDate}&`
+    }
+    if (dateObj.endDate != null) {
+      wasteApiUrl += `dateBefore=${dateObj.endDate}&`
+    }
+
+    // fetch with API request
+    fetch(wasteApiUrl, { method: "GET" })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error('Network response was not ok.');
+    })
+      .then(pantryData => {
+        // process the return data
+        let wasteMonthData = new Array(6).fill(0.0);
+        const startDate = moment(dateObj.startDate, "YYYYMMDD")
+        // loop through all waste items and sum on dates
+        for (let i = 0; i < pantryData.length; i++) {
+          const wasteItem = pantryData[i]
+          const wasteDate = moment(wasteItem.dateThrownAway, "YYYYMMDD")
+          const daysFromWeekStart = parseInt(wasteDate.diff(startDate, 'days'))
+          wasteWeekData[daysFromWeekStart] += parseFloat(wasteItem.carbonWasted)
+        }
+        // update interface with new data
+        setNumberOfWeeksAgo(update);
+        updateWeekColor(getNextWeekColor(update));
+        updateGraph(createGraphObj(dateObj.week, wasteWeekData));
+        updateWeekStartDate(moment(dateObj.startDate, "YYYYMMDD").format('L'));
+        updateWeekendDate(moment(dateObj.endDate, "YYYYMMDD").format('L'));
+        setLoading(false);
+      })
+      .catch(error => {
+        // will log and show error prompt to user
+        console.error('Error:', error)
+        Alert.alert('Network Error', 'Please check your internet connection and try again', [
+          {
+            text: 'OK', 
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ]);
+      });
+  };
+
   // updates page when first loaded
   useEffect(() => {
     getWasteWeekData(0, getWeekDays(0));
@@ -160,7 +211,6 @@ export default function Impact() {
   const weekClickHandler = () => {
     // updates the switch button
     if (pressedView == 0) {
-      console.log(pressedView)
       return
     }
     setPressedView(0);
@@ -175,7 +225,6 @@ export default function Impact() {
   const monthClickHandler = () => {
     // updates the switch button
     if (pressedView == 1) {
-      console.log(pressedView)
       return
     }
     setPressedView(1);
