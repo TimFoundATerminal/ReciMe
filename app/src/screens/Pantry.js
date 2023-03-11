@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 
+import * as Constants from '../Constants';
+
 //Navigation import
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -18,7 +20,7 @@ class Main extends Component {
 
   //HTTPS REQUEST (FETCH)
   goForFetch = () => {
-      fetch('http://172.20.10.2:3000/api/pantry', {
+      fetch(Constants.API_FIXED_URL + 'pantry', {
         method: 'GET'
       })
       .then(response => response.json())
@@ -45,9 +47,13 @@ class Main extends Component {
 
   //REMOVE ITEM FUNCTIONALITY
   removeItem = (itemToDelete) => {
-    fetch('http://172.20.10.2:3000/api/pantry/' + itemToDelete, {
+    fetch(Constants.API_FIXED_URL + 'pantry' + '/' + itemToDelete, {
         method: 'DELETE'
     })
+    .then(response => response.json())
+      .then((responseJson) => {
+          console.log('getting data from fetch', responseJson)
+      })
     .catch(error => console.log(error))
   }
 
@@ -60,7 +66,7 @@ class Main extends Component {
   // UPDATE WHETHER ITEM IS FROZEN OR NOT
   updateItem = (itemToUpdate, getIngredientID, getQuantity, getDateExpiry, freezeValue) => {
 
-    const putURL = 'http://172.20.10.2:3000/api/pantry/' + itemToUpdate
+    const putURL = Constants.API_FIXED_URL + 'pantry' + '/' + itemToUpdate;
 
     fetch(putURL, {
       method: 'PUT',
@@ -151,7 +157,7 @@ class Main extends Component {
 
                   <View style={{ margin: 6 }}>
                       <Pressable onPress={this.goForFetch} color='#056835' style={styles.button}>
-                          <Text style={{ fontSize: 15, color: 'white' }}>Click to see your pantry</Text>
+                          <Text style={{ fontSize: 15, color: 'white' }}>Click to refresh your pantry</Text>
                       </Pressable>
                   </View>
                 </>}
@@ -159,7 +165,7 @@ class Main extends Component {
                 data={dataSource}
                 ItemSeparatorComponent={this.FlatListSeparator}
                 renderItem={renderItem}
-                keyExtractor={item => item.ingredientID}
+                keyExtractor={item => item.itemID}
 
               />
               
@@ -223,15 +229,15 @@ const AddFood = (props) => {
   const [getQuantity, setQuantity] = React.useState("");
 
   // DATE CONST
-  const [getDay, setDay] = React.useState("");
-  const [getMonth, setMonth] = React.useState('1');
+  const [getDay, setDay] = React.useState('01');
+  const [getMonth, setMonth] = React.useState('01');
   const [getYear, setYear] = React.useState("");
 
   // DROPDOWN MENU DATA
   React.useEffect(() => {
     //(async () => {
     try {
-      fetch('http://172.20.10.2:3000/api/ingredients', {
+      fetch(Constants.API_FIXED_URL + 'ingredients', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -257,22 +263,116 @@ const AddFood = (props) => {
   },[])
 
   const monthData = [
-    {key:'1',value:'01'},
-    {key:'2',value:'02'},
-    {key:'3',value:'03'},
-    {key:'4',value:'04'},
-    {key:'5',value:'05'},
-    {key:'6',value:'06'},
-    {key:'7',value:'07'},
-    {key:'8',value:'08'},
-    {key:'9',value:'09'},
+    {key:'01',value:'01'},
+    {key:'02',value:'02'},
+    {key:'03',value:'03'},
+    {key:'04',value:'04'},
+    {key:'05',value:'05'},
+    {key:'06',value:'06'},
+    {key:'07',value:'07'},
+    {key:'08',value:'08'},
+    {key:'09',value:'09'},
     {key:'10',value:'10'},
     {key:'11',value:'11'},
     {key:'12',value:'12'},
   ]
 
-  const dayData = [
-    {key:'1',value:'01'}
+  const dayDataOne = [
+    {key:'01',value:'01'},
+    {key:'02',value:'02'},
+    {key:'03',value:'03'},
+    {key:'04',value:'04'},
+    {key:'05',value:'05'},
+    {key:'06',value:'06'},
+    {key:'07',value:'07'},
+    {key:'08',value:'08'},
+    {key:'09',value:'09'},
+    {key:'10',value:'10'},
+    {key:'11',value:'11'},
+    {key:'12',value:'12'},
+    {key:'13',value:'13'},
+    {key:'14',value:'14'},
+    {key:'15',value:'15'},
+    {key:'16',value:'16'},
+    {key:'17',value:'17'},
+    {key:'18',value:'18'},
+    {key:'19',value:'19'},
+    {key:'20',value:'20'},
+    {key:'21',value:'21'},
+    {key:'22',value:'22'},
+    {key:'23',value:'23'},
+    {key:'24',value:'24'},
+    {key:'25',value:'25'},
+    {key:'26',value:'26'},
+    {key:'27',value:'27'},
+    {key:'28',value:'28'},
+    {key:'29',value:'29'},
+    {key:'30',value:'30'},
+    {key:'31',value:'31'},
+  ]
+
+  const dayDataTwo = [
+    {key:'01',value:'01'},
+    {key:'02',value:'02'},
+    {key:'03',value:'03'},
+    {key:'04',value:'04'},
+    {key:'05',value:'05'},
+    {key:'06',value:'06'},
+    {key:'07',value:'07'},
+    {key:'08',value:'08'},
+    {key:'09',value:'09'},
+    {key:'10',value:'10'},
+    {key:'11',value:'11'},
+    {key:'12',value:'12'},
+    {key:'13',value:'13'},
+    {key:'14',value:'14'},
+    {key:'15',value:'15'},
+    {key:'16',value:'16'},
+    {key:'17',value:'17'},
+    {key:'18',value:'18'},
+    {key:'19',value:'19'},
+    {key:'20',value:'20'},
+    {key:'21',value:'21'},
+    {key:'22',value:'22'},
+    {key:'23',value:'23'},
+    {key:'24',value:'24'},
+    {key:'25',value:'25'},
+    {key:'26',value:'26'},
+    {key:'27',value:'27'},
+    {key:'28',value:'28'},
+    {key:'29',value:'29'},
+    {key:'30',value:'30'},
+  ]
+
+  const dayDataThree = [
+    {key:'01',value:'01'},
+    {key:'02',value:'02'},
+    {key:'03',value:'03'},
+    {key:'04',value:'04'},
+    {key:'05',value:'05'},
+    {key:'06',value:'06'},
+    {key:'07',value:'07'},
+    {key:'08',value:'08'},
+    {key:'09',value:'09'},
+    {key:'10',value:'10'},
+    {key:'11',value:'11'},
+    {key:'12',value:'12'},
+    {key:'13',value:'13'},
+    {key:'14',value:'14'},
+    {key:'15',value:'15'},
+    {key:'16',value:'16'},
+    {key:'17',value:'17'},
+    {key:'18',value:'18'},
+    {key:'19',value:'19'},
+    {key:'20',value:'20'},
+    {key:'21',value:'21'},
+    {key:'22',value:'22'},
+    {key:'23',value:'23'},
+    {key:'24',value:'24'},
+    {key:'25',value:'25'},
+    {key:'26',value:'26'},
+    {key:'27',value:'27'},
+    {key:'28',value:'28'},
   ]
 
   const yearData = [
@@ -285,12 +385,64 @@ const AddFood = (props) => {
     props.navigation.navigate('BarcodeOrManual');
   }
 
+  // CHOOSES THE CORRECT DAYS IN A MONTH
+  const ChooseDate = () => {
+
+    let chooseMonthComponent;
+
+    if (getMonth == '01' || getMonth == '03' || getMonth == '05' || getMonth == '07' || getMonth == '08' || getMonth == '10' || getMonth == '12') {
+      chooseMonthComponent =  <SelectList
+                                data={dayDataOne}
+                                //onSelect={() => alert(getDay)}
+                                // setSelected={setSelected}
+                                setSelected={(val) => setDay(val)}
+                                dropdownItemStyles={{marginHorizontal:10}}
+                                dropdownTextStyles={{color:'black'}}
+                                placeholder=" "
+                                maxHeight={100}
+                              />
+    }
+
+    if (getMonth == '04' || getMonth == '06' || getMonth == '09' || getMonth == '11') {
+      chooseMonthComponent =  <SelectList
+                                data={dayDataTwo}
+                                // onSelect={() => alert(selected)}
+                                // setSelected={setSelected}
+                                setSelected={(val) => setDay(val)}
+                                dropdownItemStyles={{marginHorizontal:10}}
+                                dropdownTextStyles={{color:'black'}}
+                                placeholder=" "
+                                maxHeight={100}
+                              />
+    }
+
+    if (getMonth == '02') {
+      chooseMonthComponent =  <SelectList
+                                data={dayDataThree}
+                                // onSelect={() => alert(selected)}
+                                // setSelected={setSelected}
+                                setSelected={(val) => setDay(val)}
+                                dropdownItemStyles={{marginHorizontal:10}}
+                                dropdownTextStyles={{color:'black'}}
+                                placeholder=" "
+                                maxHeight={100}
+                              />
+    }
+
+    return (
+      <View>
+        {chooseMonthComponent}
+      </View>
+    )
+
+  }
+
   const concatDate = getYear + getDay + getMonth;
 
   // ASYNC COMPONENT TO POST DATA TO API  
   const storeData = async () => {
     try {
-      await fetch('http://172.20.10.2:3000/api/pantry', {
+      await fetch(Constants.API_FIXED_URL + 'pantry', {
         method: 'POST',
         headers: {
           'Accept': '*/*',
@@ -311,7 +463,7 @@ const AddFood = (props) => {
     }
   }
 
-  const ingredientURL = 'http://172.20.10.2:3000/api/ingredients/' + getSelected;
+  const ingredientURL = Constants.API_FIXED_URL + 'ingredients' + '/' + getSelected;
 
   //ASYNC COMPONENT TO GET CORRESPONDING STANDARD UNIT FOR ID
   const getStandardUnit = async () => {
@@ -384,9 +536,10 @@ const AddFood = (props) => {
       {/* DATE */}
       <Text style={{ marginTop: 9, marginBottom: 3, fontWeight: 'bold' }}>Use by date:</Text>
       <View style={{ flexDirection: "row" }}>
+        {/* <ChooseDate /> */}
         <SelectList
-          data={dayData}
-          // onSelect={() => alert(selected)}
+          data={dayDataOne}
+          //onSelect={() => alert(getDay)}
           // setSelected={setSelected}
           setSelected={(val) => setDay(val)}
           dropdownItemStyles={{marginHorizontal:10}}
