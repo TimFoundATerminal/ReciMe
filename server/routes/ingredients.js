@@ -23,9 +23,9 @@ const { handleValidator } = require('../middleware/validation')
  *                 $ref: '#/components/schemas/ingredient'
  *
 */
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
-    res.status(200).json(ingredientsModel.getAll())
+    res.status(200).json(await ingredientsModel.getAll())
   } catch (err) {
     next(err)
   }
@@ -56,9 +56,9 @@ router.get('/', function (req, res, next) {
  *          description: Invalid ID
  *
 */
-router.get('/:ingredientID', param('ingredientID').isInt(), handleValidator, function (req, res, next) {
+router.get('/:ingredientID', param('ingredientID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(ingredientsModel.getIngredient(req.params.ingredientID))
+    res.status(200).json(await ingredientsModel.getIngredient(req.params.ingredientID))
   } catch (err) {
     next(err)
   }
@@ -88,9 +88,9 @@ router.post('/',
   body('standardUnit').isString().exists(),
   body('carbonPerUnit').isFloat().exists(),
   handleValidator,
-  function (req, res, next) {
+  async function (req, res, next) {
     try {
-      res.status(200).json(ingredientsModel.createIngredient(req.body))
+      res.status(200).json(await ingredientsModel.createIngredient(req.body))
     } catch (err) {
       next(err)
     }
@@ -118,9 +118,9 @@ router.post('/',
  *          description: Invalid ID
  *
 */
-router.delete('/:ingredientID', param('ingredientID').isInt(), handleValidator, function (req, res, next) {
+router.delete('/:ingredientID', param('ingredientID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(ingredientsModel.deleteIngredient(req.params.ingredientID))
+    res.status(200).json(await ingredientsModel.deleteIngredient(req.params.ingredientID))
   } catch (err) {
     next(err)
   }

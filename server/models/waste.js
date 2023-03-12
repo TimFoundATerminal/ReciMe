@@ -2,8 +2,8 @@
 const db = require('./db')
 const ingredientModel = require('./ingredients')
 
-function getAll (dateBefore, dateAfter) {
-  const data = db.query(
+async function getAll (dateBefore, dateAfter) {
+  const data = await db.query(
     'SELECT * \
         FROM waste\
         INNER JOIN ingredients on ingredients.ingredientID = waste.ingredientID\
@@ -12,28 +12,28 @@ function getAll (dateBefore, dateAfter) {
   return data
 }
 
-function getLog (id) {
-  const data = db.queryRow('SELECT * FROM waste INNER JOIN ingredients on ingredients.ingredientID = waste.ingredientID WHERE wasteID = ?', id)
+async function getLog (id) {
+  const data = await db.queryRow('SELECT * FROM waste INNER JOIN ingredients on ingredients.ingredientID = waste.ingredientID WHERE wasteID = ?', id)
   return data
 }
 
-function createLog (wasteObj) {
-  const carbonPerUnit = ingredientModel.getIngredient(wasteObj.ingredientID).carbonPerUnit
-  wasteObj.carbonWasted = (wasteObj.quantity * carbonPerUnit).toFixed(2)
-  const result = db.run(
+async function createLog (wasteObj) {
+  const ingredient = await ingredientModel.getIngredient(wasteObj.ingredientID)
+  wasteObj.carbonWasted = (wasteObj.quantity * ingredient.carbonPerUnit).toFixed(2)
+  const result = await db.run(
     'INSERT INTO waste (ingredientID, dateThrownAway, quantity, carbonWasted) \
-        VALUES (@ingredientID, @dateThrownAway, @quantity, @carbonWasted)', wasteObj)
+        VALUES (?, ?, ?, ?)', Object.values(wasteObj))
   return { message: db.validateChanges(result, 'Waste log created successfully', 'Error in creating waste log') }
 }
 
-function deleteLog (id) {
-  const result = db.run(
-    'DELETE FROM waste WHERE wasteID = @id', { id })
+async function deleteLog (id) {
+  const result = await db.run(
+    'DELETE FROM waste WHERE wasteID = ?', id)
   return { message: db.validateChanges(result, 'Waste log deleted successfully', 'Error deleting waste log') }
 }
 
-function sumCarbon (dateBefore, dateAfter) {
-  const data = db.query(
+async function sumCarbon (dateBefore, dateAfter) {
+  const data = await db.query(
     'SELECT SUM(carbonWasted) \
         FROM waste WHERE dateThrownAway < ? and dateThrownAway > ?',
     [dateBefore, dateAfter])

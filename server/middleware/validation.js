@@ -9,12 +9,12 @@ function handleValidator (req, res, next) {
   next()
 }
 
-function ingredientExists (req, res, next) {
-  const ingredient = ingredientModel.getIngredient(req.body.ingredientID)
+async function ingredientExists (req, res, next) {
+  const ingredient = await ingredientModel.getIngredient(req.body.ingredientID)
   if (Object.keys(ingredient).length === 0) {
     const error = new Error('IngredientID does not exist')
     error.statusCode = 400
-    throw error
+    next(error)
   }
   next()
 }

@@ -17,9 +17,9 @@ const router = express.Router()
  *          description: Invalid ID
  *
 */
-router.delete('/', function (req, res, next) {
+router.delete('/', async function (req, res, next) {
   try {
-    res.status(200).json(resetModel.reset())
+    res.status(200).json(await resetModel.reset())
   } catch (err) {
     next(err)
   }

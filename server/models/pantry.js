@@ -1,8 +1,8 @@
 /* eslint-disable no-multi-str */
 const db = require('./db')
 
-function getAll () {
-  const data = db.query(
+async function getAll () {
+  const data = await db.query(
     'SELECT * \
         FROM pantry\
         INNER JOIN ingredients on ingredients.ingredientID = pantry.ingredientID',
@@ -10,25 +10,25 @@ function getAll () {
   return data
 }
 
-function getItem (id) {
-  const data = db.queryRow('SELECT * FROM pantry INNER JOIN ingredients on ingredients.ingredientID = pantry.ingredientID WHERE itemID = ?', id)
+async function getItem (id) {
+  const data = await db.queryRow('SELECT * FROM pantry INNER JOIN ingredients on ingredients.ingredientID = pantry.ingredientID WHERE itemID = ?', id)
   return data
 }
 
-function createItem (pantryObj) {
-  const result = db.run(
+async function createItem (pantryObj) {
+  const result = await db.run(
     'INSERT INTO pantry (ingredientID, quantity, dateExpiry, frozen) \
-         VALUES (@ingredientID, @quantity, @dateExpiry, @frozen)', pantryObj)
+         VALUES (?, ?, ?, ?)', Object.values(pantryObj))
   return { message: db.validateChanges(result, 'Pantry item created successfully', 'Error in creating pantry item') }
 }
 
-function deleteItem (id) {
-  const result = db.run(
-    'DELETE FROM pantry WHERE itemID = @id', { id })
+async function deleteItem (id) {
+  const result = await db.run(
+    'DELETE FROM pantry WHERE itemID = ?', id)
   return { message: db.validateChanges(result, 'Pantry item deleted successfully', 'Error deleting pantry item') }
 }
 
-function updateItem (id, body) {
+async function updateItem (id, body) {
   if (Object.keys(body).length === 0) {
     const error = new Error('Request body can\'t be blank')
     error.statusCode = 400
@@ -46,7 +46,7 @@ function updateItem (id, body) {
   sqlStatement = sqlStatement + 'WHERE itemID = ?'
   const vals = Object.values(body)
   vals.push(id)
-  const result = db.run(sqlStatement, vals)
+  const result = await db.run(sqlStatement, vals)
   return { message: db.validateChanges(result, 'Pantry item updated successfully', 'Error updating pantry item') }
 }
 

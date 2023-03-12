@@ -23,9 +23,9 @@ const { handleValidator, ingredientExists } = require('../middleware/validation'
  *                 $ref: '#/components/schemas/pantry'
  *
 */
-router.get('/', function (req, res, next) {
+router.get('/', async function (req, res, next) {
   try {
-    res.status(200).json(pantryModel.getAll())
+    res.status(200).json(await pantryModel.getAll())
   } catch (err) {
     next(err)
   }
@@ -56,9 +56,9 @@ router.get('/', function (req, res, next) {
  *          description: Invalid ID
  *
 */
-router.get('/:itemID', param('itemID').isInt(), handleValidator, function (req, res, next) {
+router.get('/:itemID', param('itemID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(pantryModel.getItem(req.params.itemID))
+    res.status(200).json(await pantryModel.getItem(req.params.itemID))
   } catch (err) {
     next(err)
   }
@@ -87,9 +87,9 @@ router.get('/:itemID', param('itemID').isInt(), handleValidator, function (req, 
  *          description: Invalid
  *
 */
-router.delete('/:itemID', param('itemID').isInt(), handleValidator, function (req, res, next) {
+router.delete('/:itemID', param('itemID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(pantryModel.deleteItem(req.params.itemID))
+    res.status(200).json(await pantryModel.deleteItem(req.params.itemID))
   } catch (err) {
     next(err)
   }
@@ -121,9 +121,10 @@ router.post('/',
   body('frozen').isInt({ min: 0, max: 1 }).exists(),
   handleValidator,
   ingredientExists,
-  function (req, res, next) {
+  async function (req, res, next) {
     try {
-      res.status(200).json(pantryModel.createItem(req.body))
+      console.log(req.body)
+      res.status(200).json(await pantryModel.createItem(req.body))
     } catch (err) {
       next(err)
     }
@@ -163,9 +164,9 @@ router.put('/:itemID',
   body('dateExpiry').isInt().optional(),
   body('frozen').isInt({ min: 0, max: 1 }).optional(),
   handleValidator,
-  function (req, res, next) {
+  async function (req, res, next) {
     try {
-      res.status(200).json(pantryModel.updateItem(req.params.itemID, req.body))
+      res.status(200).json(await pantryModel.updateItem(req.params.itemID, req.body))
     } catch (err) {
       next(err)
     }

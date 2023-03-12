@@ -9,6 +9,10 @@ const swaggerDefinition = {
     {
       url: 'http://localhost:3000/api',
       description: 'Local server'
+    },
+    {
+      url: 'https://server-eemxqqdgca-nw.a.run.app/api',
+      description: 'Google Cloud'
     }
   ],
   tags: [
