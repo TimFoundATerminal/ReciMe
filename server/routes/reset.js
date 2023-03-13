@@ -4,8 +4,8 @@ const router = express.Router()
 
 /**
  * @swagger
- * /reset:
- *   delete:
+ * /reset/defaultIngredients:
+ *   get:
  *     tags:
  *       - Reset
  *     summary: Reset the db to just ingredients
@@ -17,9 +17,32 @@ const router = express.Router()
  *          description: Invalid ID
  *
 */
-router.delete('/', async function (req, res, next) {
+router.get('/defaultIngredients', async function (req, res, next) {
   try {
-    res.status(200).json(await resetModel.reset())
+    res.status(200).json(await resetModel.resetToIngredients())
+  } catch (err) {
+    next(err)
+  }
+})
+
+/**
+ * @swagger
+ * /reset/testData:
+ *   get:
+ *     tags:
+ *       - Reset
+ *     summary: Reset the db to test data
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *       '400':
+ *          description: Invalid ID
+ *
+*/
+router.get('/testData', async function (req, res, next) {
+  try {
+    res.status(200).json(await resetModel.resetToTest())
   } catch (err) {
     next(err)
   }
