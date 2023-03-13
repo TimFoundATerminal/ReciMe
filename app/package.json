@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.2",
+    "@miblanchard/react-native-slider": "^2.3.0",
     "@react-navigation/bottom-tabs": "^6.5.5",
     "@react-navigation/native-stack": "^6.9.12",
     "expo": "~47.0.12",

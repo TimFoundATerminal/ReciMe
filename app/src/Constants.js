@@ -7,14 +7,19 @@
 // deprecated - no longer in use as have moved backend to a static server
 const IP_ADDRESS = 'xxx.xxx.xxx.xxx'; // deprecated
 const LOCAL_HOST_PORT = '3000'; // deprecated
-export const API_BASE_URL = 'http://' + IP_ADDRESS +':' + LOCAL_HOST_PORT + '/api'; // deprecated
 
 export const API_FIXED_URL = 'https://server-eemxqqdgca-nw.a.run.app/api/'
+// const IP_ADDRESS = '172.20.10.2'
+// const LOCAL_HOST_PORT = '3000'
+
+const cloud_server = 'https://server-eemxqqdgca-nw.a.run.app'
 
 // Spponacular
 const API_KEY = '54385497726e4c6b9dba6f8704f480c3'
 
 // base URLs
+// export const API_BASE_URL = `http://${IP_ADDRESS}:${LOCAL_HOST_PORT}/api/`
+export const API_BASE_URL = `${cloud_server}/api/`
 export const SPOONACULAR_BASE_URL = "https://api.spoonacular.com/recipes"
 
 export function getRecipesCall(ingredients, numberRecipes = 5) {
