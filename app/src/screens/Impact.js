@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { SafeAreaView, Text, Dimensions, View, Pressable, StatusBar, Platform, ActivityIndicator, StyleSheet } from "react-native";
+import { SafeAreaView, Text, Dimensions, View, Pressable, StatusBar, Platform, ActivityIndicator, StyleSheet, Alert } from "react-native";
 import { BarChart } from "react-native-chart-kit";
 import tw from 'twrnc';
 import * as Constants from '../Constants';
@@ -43,7 +43,7 @@ export default function Impact() {
   // API call to the remote backend for the data
   let getWasteWeekData = (update, dateObj) => {
     // build api request
-    let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
+    let wasteApiUrl = Constants.API_FIXED_URL + `waste?`
     if (dateObj.startDate != null) {
       wasteApiUrl += `dateAfter=${dateObj.startDate}&`
     }
@@ -60,6 +60,7 @@ export default function Impact() {
       throw new Error('Network response was not ok.');
     })
       .then(pantryData => {
+        console.log("This code ran 1");
         // process the return data
         let wasteWeekData = new Array(7).fill(0.0);
         const startDate = moment(dateObj.startDate, "YYYYMMDD")
@@ -95,7 +96,7 @@ export default function Impact() {
   let getWasteMonthData = () => {
     // build api request
     const monthsObj = getMonthSpan();
-    let wasteApiUrl = Constants.API_FIXED_URL + `/waste?`
+    let wasteApiUrl = Constants.API_FIXED_URL + `waste?`
     if (monthsObj.startDate != null) {
       wasteApiUrl += `dateAfter=${monthsObj.startDate}&`
     }
@@ -112,6 +113,7 @@ export default function Impact() {
       throw new Error('Network response was not ok.');
     })
       .then(wasteData => {
+        console.log("This code ran 2");
         // process the return data into months and sum carbon wasted
         let monthRanges = new Array(7);
         // creates a range of dates to test between
