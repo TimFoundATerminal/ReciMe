@@ -1,33 +1,8 @@
-const db = require('better-sqlite3')('db.sqlite')
+process.env.MYSQL_PWD = 'LT1caP25I4'
+process.env.ENVIRONMENT = 'production'
 
-function query (sql, params) {
-  return db.prepare(sql).all(params)
-}
-
-function queryRow (sql, id) {
-  const data = db.prepare(sql).get(id)
-  return (!data ? {} : data)
-}
-
-function run (sql, params) {
-  return db.prepare(sql).run(params)
-}
-
-function validateChanges (result, passMsg, failMsg) {
-  let message = failMsg
-  if (result.changes) {
-    message = passMsg
-  } else {
-    const error = new Error(message)
-    error.statusCode = 400
-    throw error
-  }
-  return message
-}
-
-module.exports = {
-  query,
-  queryRow,
-  run,
-  validateChanges
+if (process.env.ENVIRONMENT === 'production') {
+  module.exports = require('./db-mysql')
+} else {
+  module.exports = require('./db-sqlite')
 }

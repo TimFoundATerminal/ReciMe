@@ -40,11 +40,11 @@ router.get('/',
   query('dateBefore').isInt().optional(),
   query('dateAfter').isInt().optional(),
   handleValidator,
-  function (req, res, next) {
+  async function (req, res, next) {
     try {
       const dateBefore = 'dateBefore' in req.query ? req.query.dateBefore : 99999999
       const dateAfter = 'dateAfter' in req.query ? req.query.dateAfter : 0
-      res.status(200).json(wasteModel.getAll(dateBefore, dateAfter))
+      res.status(200).json(await wasteModel.getAll(dateBefore, dateAfter))
     } catch (err) {
       next(err)
     }
@@ -88,11 +88,11 @@ router.get('/',
 router.get('/carbonTotal',
   query('dateBefore').isInt().optional(),
   query('dateAfter').isInt().optional(),
-  handleValidator, function (req, res, next) {
+  handleValidator, async function (req, res, next) {
     try {
       const dateBefore = 'dateBefore' in req.query ? req.query.dateBefore : 99999999
       const dateAfter = 'dateAfter' in req.query ? req.query.dateAfter : 0
-      res.status(200).json(wasteModel.sumCarbon(dateBefore, dateAfter))
+      res.status(200).json(await wasteModel.sumCarbon(dateBefore, dateAfter))
     } catch (err) {
       next(err)
     }
@@ -123,9 +123,9 @@ router.get('/carbonTotal',
  *          description: Invalid ID
  *
 */
-router.get('/:wasteID', param('wasteID').isInt(), handleValidator, function (req, res, next) {
+router.get('/:wasteID', param('wasteID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(wasteModel.getLog(req.params.wasteID))
+    res.status(200).json(await wasteModel.getLog(req.params.wasteID))
   } catch (err) {
     next(err)
   }
@@ -156,9 +156,9 @@ router.post('/',
   body('quantity').isFloat().exists(),
   handleValidator,
   ingredientExists,
-  function (req, res, next) {
+  async function (req, res, next) {
     try {
-      res.status(200).json(wasteModel.createLog(req.body))
+      res.status(200).json(await wasteModel.createLog(req.body))
     } catch (err) {
       next(err)
     }
@@ -186,9 +186,9 @@ router.post('/',
  *          description: Invalid ID
  *
 */
-router.delete('/:wasteID', param('wasteID').isInt(), handleValidator, function (req, res, next) {
+router.delete('/:wasteID', param('wasteID').isInt(), handleValidator, async function (req, res, next) {
   try {
-    res.status(200).json(wasteModel.deleteLog(req.params.wasteID))
+    res.status(200).json(await wasteModel.deleteLog(req.params.wasteID))
   } catch (err) {
     next(err)
   }

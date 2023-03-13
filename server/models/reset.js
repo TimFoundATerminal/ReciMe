@@ -1,11 +1,24 @@
 const db = require('./db')
+const factoryHelpers = require('../utils/factory_helpers')
 
-function reset () {
-  const result = db.run('DELETE FROM pantry', {})
-  db.run('DELETE FROM waste', {})
-  return { message: db.validateChanges(result, 'DB reset succesfully', 'Error reseting DB') }
+async function clear () {
+  await db.reset('pantry')
+  await db.reset('waste')
+}
+
+async function resetToIngredients () {
+  await clear()
+  return { message: 'DB reset succesfully' }
+}
+
+async function resetToTest () {
+  await clear()
+  factoryHelpers.poplulatePantry()
+  factoryHelpers.poplulateImpact()
+  return { message: 'DB reset succesfully' }
 }
 
 module.exports = {
-  reset
+  resetToIngredients,
+  resetToTest
 }
