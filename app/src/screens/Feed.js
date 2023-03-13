@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-// update constants you need in 'constants.js' file
-import * as Constants from "../Constants";
+import * as Constants from '../Constants';
+import { getRecipesCall } from "../Constants";
 import {
   Text,
   View,
@@ -14,48 +14,67 @@ import {
 import tw from "twrnc";
 import RecipePreview from "../components/RecipePreview";
 
-export default function Feed({ navigation }) {
+
+export default function Feed({ navigation, route }) {
+
   const [filterVisible, setFilterVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  // const backupRecipes = require("../test-data/maximise-ingredients-recipes.json");
-
-  // Ingredients list separated by ,+
-
-  const [loading, setLoaing] = useState(true);
-  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true)
+  const [recipes, setRecipes] = useState([])
+  const [pantry, setPantry] = useState([])
 
   // change this (IPV4 address from ipconfig in command line)
-  const pantryCallURL = Constants.API_BASE_URL + `/pantry`;
+  const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
+
+  const use_backup_data = false
 
   useEffect(() => {
-    fetch(pantryCallURL, { method: "GET" })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error("Network response was not ok.");
-      })
-      .then((pantryData) => {
-        const ingredients = pantryData.map((pantryItem) => pantryItem.name);
-        const spoonacularAPICall = Constants.getSpoonacularAPICall(ingredients);
 
-        // make API call
-        fetch(spoonacularAPICall)
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            }
-            throw new Error("Network response was not ok.");
-          })
-          .then((recipes) => {
-            setRecipes(recipes);
-            setLoaing(false);
-          })
-          .catch((error) => console.error("Error:", error));
-      })
-      .catch((error) => console.error("Error:", error));
-  });
+    if (loading) {
+
+      // get pantry
+      fetch(use_backup_data ? pantryCallURL : '')
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          return response.text().then(text => { throw new Error(text) })
+        })
+        .catch(error => {
+          console.warn('Warning:', error)
+          const backupPantry = require('./backup-data/backup-pantry.json')
+          return backupPantry
+        })
+        .then(pantryItems => {
+
+          setPantry(pantryItems)
+
+          const ingredients = pantryItems.map(pantryItem => pantryItem.name).join(',+')
+          const spoonacularAPICallURL = getRecipesCall(ingredients)
+
+          // get recipes
+          fetch(use_backup_data ? spoonacularAPICallURL : '')
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              }
+              return response.text().then(text => { throw new Error(text) })
+            })
+            .catch((error) => {
+              console.warn('Warning:', error)
+              var backupRecipes = require('./backup-data/backup-recipes.json')
+              return backupRecipes
+            })
+            .then(recipes => {
+
+              setRecipes(recipes)
+              setLoading(false)
+
+            })
+        })
+    }
+  })
 
   return (
     <View>
@@ -85,6 +104,25 @@ export default function Feed({ navigation }) {
               modalVisible={modalVisible}
             />
             <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+       
+       
+       
+        {/* {recipes.map((recipe, i) => (
+
+          // link to instructions
+          <Pressable 
+            key={i}
+            onPress={() =>
+            navigation.navigate('Instructions', {
+              currentPantryItems: pantry,
+              recipeData: recipe
+            })
+          }>
+
+            <View style={tw`relative p-4`}> */}
+
+
+
               <View style={tw`w-full h-45 bg-black rounded-3xl`}>
                 <Image
                   style={tw`rounded-3xl w-full h-full opacity-65`}
