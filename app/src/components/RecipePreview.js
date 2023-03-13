@@ -14,17 +14,29 @@ import {
 } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
 import tw from "twrnc";
+import { useNavigation } from '@react-navigation/native';
+
+  
 
 export default function RecipePreview({
   recipe,
+  pantry,
   setModalVisible,
   modalVisible,
+  idx
 }) {
+
+  const ingredients = recipe.missedIngredients.concat(recipe.usedIngredients).map(ingredient => ({
+    key: ingredient.original}
+    ) )
+
+  const navigation = useNavigation();
+
   const [portionSize, setPortionSize] = useState(1);
   const [macrosVisible, setMacrosVisible] = useState(false);
 
   return (
-    <Modal animationType="slide" transparent={true} visible={modalVisible}>
+    <Modal animationType="slide" transparent={true} visible={idx === modalVisible}>
       <View style={tw`pt-12 w-full h-full bg-white`}>
         <Image
           style={tw`rounded-3xl w-full h-45`}
@@ -70,11 +82,7 @@ export default function RecipePreview({
           <View style={tw`flex m-auto`}>
             <Text style={tw`text-lg pb-2 text-center`}>Ingredients</Text>
             <FlatList
-              data={[
-                { key: "9 garlic cloves" },
-                { key: "1 fresh chilli" },
-                { key: "1 onion, diced" },
-              ]}
+              data={ ingredients }
               renderItem={({ item }) => {
                 return (
                   <View style={{ marginBottom: 10 }}>
@@ -116,6 +124,10 @@ export default function RecipePreview({
           style={tw`w-1/2 h-16 bg-green-800 absolute bottom-0 right-0`}
           onPress={() => {
             setModalVisible(false);
+            navigation.navigate('Instructions', {
+              currentPantryItems: pantry,
+              recipeData: recipe
+            })
           }}
         >
           <Text style={tw`m-auto text-white text-lg`}>Continue Recipe</Text>

@@ -27,7 +27,7 @@ export default function Feed({ navigation, route }) {
   // change this (IPV4 address from ipconfig in command line)
   const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
 
-  const use_backup_data = false
+  const use_backup_data = true
 
   useEffect(() => {
 
@@ -62,7 +62,7 @@ export default function Feed({ navigation, route }) {
               return response.text().then(text => { throw new Error(text) })
             })
             .catch((error) => {
-              console.warn('Warning:', error)
+              console.warn('Warning:', error, 'from', spoonacularAPICallURL)
               var backupRecipes = require('./backup-data/backup-recipes.json')
               return backupRecipes
             })
@@ -74,7 +74,7 @@ export default function Feed({ navigation, route }) {
             })
         })
     }
-  })
+  }, [])
 
   return (
     <View>
@@ -96,32 +96,17 @@ export default function Feed({ navigation, route }) {
       <ScrollView>
         {!loading ?? <Text>Loading...</Text>}
 
-        {recipes.map((recipe) => (
-          <View key={recipe.id} style={tw`relative p-4`}>
+        {recipes.map((recipe, idx) => (
+          <View key={ idx } style={tw`relative p-4`}>
+
             <RecipePreview
+              idx = { idx }
               recipe={recipe}
+              pantry={pantry}
               setModalVisible={setModalVisible}
               modalVisible={modalVisible}
             />
-            <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
-       
-       
-       
-        {/* {recipes.map((recipe, i) => (
-
-          // link to instructions
-          <Pressable 
-            key={i}
-            onPress={() =>
-            navigation.navigate('Instructions', {
-              currentPantryItems: pantry,
-              recipeData: recipe
-            })
-          }>
-
-            <View style={tw`relative p-4`}> */}
-
-
+            <TouchableOpacity onPress={() => setModalVisible(idx)}>
 
               <View style={tw`w-full h-45 bg-black rounded-3xl`}>
                 <Image
