@@ -22,11 +22,13 @@ export default function RecipePreview({
 }) {
 
   const missedIngredients = recipe.missedIngredients.map(ingredient => ({
-    key: ingredient.original
+    key: ingredient.original,
+    id: ingredient.id
   }))
 
   const usedIngredients = recipe.usedIngredients.map(ingredient => ({
-    key: ingredient.original
+    key: ingredient.original,
+    id: ingredient.id
   }))
 
   const navigation = useNavigation();
@@ -60,7 +62,7 @@ export default function RecipePreview({
       .then(nutrition => {
         setMacros(
           nutrition.bad.slice(0, 6).map((macro, idx) =>
-            <Text style={tw`py-1`} key={macro.id}>
+            <Text style={tw`py-1`} key={idx}>
               {macro.title}: {macro.amount}
             </Text>
           )
