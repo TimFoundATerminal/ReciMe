@@ -2,14 +2,9 @@ import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  ScrollView,
   Image,
-  StyleSheet,
   Modal,
   Pressable,
-  ImageBackground,
-  TouchableOpacity,
-  Button,
   FlatList,
 } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
