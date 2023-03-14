@@ -43,7 +43,7 @@ export default function Impact() {
   // API call to the remote backend for the data
   let getWasteWeekData = (update, dateObj) => {
     // build api request
-    let wasteApiUrl = Constants.API_FIXED_URL + `waste?`
+    let wasteApiUrl = Constants.API_BASE_URL + `waste?`
     if (dateObj.startDate != null) {
       wasteApiUrl += `dateAfter=${dateObj.startDate}&`
     }
@@ -60,7 +60,6 @@ export default function Impact() {
       throw new Error('Network response was not ok.');
     })
       .then(pantryData => {
-        console.log("This code ran 1");
         // process the return data
         let wasteWeekData = new Array(7).fill(0.0);
         const startDate = moment(dateObj.startDate, "YYYYMMDD")
@@ -96,7 +95,7 @@ export default function Impact() {
   let getWasteMonthData = () => {
     // build api request
     const monthsObj = getMonthSpan();
-    let wasteApiUrl = Constants.API_FIXED_URL + `waste?`
+    let wasteApiUrl = Constants.API_BASE_URL + `waste?`
     if (monthsObj.startDate != null) {
       wasteApiUrl += `dateAfter=${monthsObj.startDate}&`
     }
@@ -113,7 +112,6 @@ export default function Impact() {
       throw new Error('Network response was not ok.');
     })
       .then(wasteData => {
-        console.log("This code ran 2");
         // process the return data into months and sum carbon wasted
         let monthRanges = new Array(7);
         // creates a range of dates to test between
@@ -137,7 +135,6 @@ export default function Impact() {
         setMonthGraphObj(createGraphObj(monthsObj.months, wasteMonthData))
 
         // process data for insights
-        console.log(wasteData);
         const carbonWaste = new Object();
         let totalCarbonWasted = 0.0;
         
@@ -165,14 +162,10 @@ export default function Impact() {
           }
         }
         
-        console.log(ingredientName)
         setInsightName(ingredientName)
-        console.log(quantityWaste)
         setInsightQuantity(quantityWaste)
-        console.log(ingredientUnit)
         setInsightUnit(ingredientUnit)
         const carbonPercentage = parseInt(100*(carbonWaste[ingredientId]/totalCarbonWasted))
-        console.log(carbonPercentage)
         setInsightcarbonPercentage(carbonPercentage)
         setInsightsLoading(false);
 
