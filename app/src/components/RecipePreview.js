@@ -59,8 +59,8 @@ export default function RecipePreview({
       })
       .then(nutrition => {
         setMacros(
-          nutrition.bad.slice(0, 6).map(macro =>
-            <Text style={tw`py-1`}>
+          nutrition.bad.slice(0, 6).map((macro, idx) =>
+            <Text style={tw`py-1`} key={macro.id}>
               {macro.title}: {macro.amount}
             </Text>
           )
@@ -121,6 +121,7 @@ export default function RecipePreview({
             <Text style={tw`text-lg pb-2 text-center`}>Used Ingredients:</Text>
             <FlatList
               data={usedIngredients}
+              keyExtractor={item => item.id}
               renderItem={({ item }) => {
                 return (
                   <View style={{ marginBottom: 10 }}>
@@ -133,9 +134,10 @@ export default function RecipePreview({
             <Text style={tw`text-lg pb-2 text-center pt-2`}>Missed Ingredients:</Text>
             <FlatList
               data={missedIngredients}
+              keyExtractor={item => item.id}
               renderItem={({ item }) => {
                 return (
-                  <View style={{ marginBottom: 10 }}>
+                  <View style={{ marginBottom: 10 }} key={item.id}>
                     <Text style={{ fontSize: 16 }}>- {item.key}</Text>
                   </View>
                 );
