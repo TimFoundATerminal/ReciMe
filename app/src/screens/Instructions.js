@@ -84,22 +84,18 @@ export default function Instructions({ navigation, route }) {
                     return response.text().then(text => { throw new Error(text) })
                 })
                 .catch(errorMsg => {
-                    console.warn('Error:', errorMsg)
+                    console.error('Error:', errorMsg)
                     var backupInstructionsData = require('./backup-data/backup-instructions.json')
                     return backupInstructionsData
                 })
                 .then(theInstructions => {
-                    if (theInstructions != null) {
-                        setInstructions(theInstructions[0].steps)
-                    } else {
-                        setError('Could not use local API :(')
-                    }
+                    setInstructions(theInstructions[0].steps)
                     setLoading(false)
                 })
         }
 
 
-    })
+    }, [])
 
     return (
 
@@ -116,26 +112,13 @@ export default function Instructions({ navigation, route }) {
                 {recipeData.title}
             </Text>
 
-            {/* Start Meal */}
-            <View>
-
-                <Image
-                    style={tw`rounded-3xl w-full h-full `}
-                    source={{
-                        uri: recipeData.Image
-                    }}
-                />
-
-            </View>
-
-
             <View >
 
                 {/* Instructions */}
 
                 <Text>{!loading ?? "Loading..."}</Text>
 
-                {instructions.map((instructionStep, index) => (
+                {instructions.map((instructionStep, index) => 
                     <View key={index} style={tw`pb-6 flex flex-row`}>
 
                         <Text>
@@ -145,7 +128,7 @@ export default function Instructions({ navigation, route }) {
 
 
                     </View>
-                ))}
+                )}
 
                 {/* End meal */}
                 <View>

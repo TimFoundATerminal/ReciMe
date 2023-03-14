@@ -7,13 +7,18 @@ import {
   ScrollView,
   Image,
   Pressable,
+  ImageBackground,
+  TouchableOpacity,
+  Button,
 } from "react-native";
 import tw from "twrnc";
+import RecipePreview from "../components/RecipePreview";
 
 
 export default function Feed({ navigation, route }) {
 
   const [filterVisible, setFilterVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [loading, setLoading] = useState(true)
   const [recipes, setRecipes] = useState([])
@@ -22,7 +27,7 @@ export default function Feed({ navigation, route }) {
   // change this (IPV4 address from ipconfig in command line)
   const pantryCallURL = `${Constants.API_BASE_URL}/pantry`
 
-  const use_backup_data = false
+  const use_backup_data = true
 
   useEffect(() => {
 
@@ -57,7 +62,7 @@ export default function Feed({ navigation, route }) {
               return response.text().then(text => { throw new Error(text) })
             })
             .catch((error) => {
-              console.warn('Warning:', error)
+              console.warn('Warning:', error, 'from', spoonacularAPICallURL)
               var backupRecipes = require('./backup-data/backup-recipes.json')
               return backupRecipes
             })
@@ -69,7 +74,7 @@ export default function Feed({ navigation, route }) {
             })
         })
     }
-  })
+  }, [])
 
   return (
     <View>
@@ -87,24 +92,22 @@ export default function Feed({ navigation, route }) {
           <Text>MENU CONTENT HERE</Text>
         </View>
       )}
-      <ScrollView>
 
+      <ScrollView>
         {!loading ?? <Text>Loading...</Text>}
 
-        {/* when pantry and recipe loaded in -> load feed */}
-        {recipes.map((recipe, i) => (
+        {recipes.map((recipe, idx) => (
+          <View key={ idx } style={tw`relative p-4`}>
 
-          // link to instructions
-          <Pressable 
-            key={i}
-            onPress={() =>
-            navigation.navigate('Instructions', {
-              currentPantryItems: pantry,
-              recipeData: recipe
-            })
-          }>
+            <RecipePreview
+              idx = { idx }
+              recipe={recipe}
+              pantry={pantry}
+              setModalVisible={setModalVisible}
+              modalVisible={modalVisible}
+            />
+            <TouchableOpacity onPress={() => setModalVisible(idx)}>
 
-            <View style={tw`relative p-4`}>
               <View style={tw`w-full h-45 bg-black rounded-3xl`}>
                 <Image
                   style={tw`rounded-3xl w-full h-full opacity-65`}
@@ -131,11 +134,9 @@ export default function Feed({ navigation, route }) {
                   <Text style={tw`text-white`}>0.4kg</Text>
                 </View>
               </View>
-            </View>
-          </Pressable>
-
+            </TouchableOpacity>
+          </View>
         ))}
-
       </ScrollView>
     </View>
   );
