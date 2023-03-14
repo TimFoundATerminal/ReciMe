@@ -1,8 +1,11 @@
 import React, { Component } from "react";
-import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { Alert, StyleSheet, Text, View, Pressable, TextInput, SafeAreaView, FlatList, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 
 import * as Constants from '../Constants';
+
+import DatePicker from 'react-native-modern-datepicker';
+import { getToday, getFormatedDate } from 'react-native-modern-datepicker';
 
 //Navigation import
 import {NavigationContainer} from '@react-navigation/native';
@@ -129,7 +132,7 @@ class Main extends Component {
 
       // NAVIGATION FUNCTIONS
       const onPressChoose = () => {
-        this.props.navigation.navigate('BarcodeOrManual');
+        this.props.navigation.navigate('AddFood');
       }
 
       // DESTRUCTURE STATE <- so don't have to repeat certain syntax (ex: this.state)
@@ -172,7 +175,7 @@ class Main extends Component {
               {/* LOADING UI WHILST FETCHING */}
               {/* {loading &&
                   <View style={styles.loader}>
-                      <ActivityIndicator size="large" color="#0c9" />
+                      <ActivityIndicator size="large" color="#056835" />
                       <Text>Fetching Data</Text>
                   </View>
               } */}
@@ -183,42 +186,24 @@ class Main extends Component {
 
 }
 
-// CHOOSE BETWEEN ADDING FOOD MANUALLY OR USING BARCODE
-const BarcodeOrManual = (props) => {
-
-  // NAVIGATION FUNCTIONS
-  const onPressDropdown = () => {
-    props.navigation.navigate('AddFood');
-  }
-
-  const onPressBarcode = () => {
-    props.navigation.navigate('Barcode');
-  }
-
-  const onPressBack = () => {
-    props.navigation.navigate('Main');
-  }
-
-  return (
-    <View style={{ paddingHorizontal: 20, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-
-      {/* NAVIGATION BUTTONS */}
-      <Pressable onPress={onPressBarcode} style={styles.button}>
-        <Text style={{ fontSize: 15, color: 'white' }}>Use Barcode Scanner</Text>
-      </Pressable>
-      <Pressable onPress={onPressDropdown} style={styles.button}>
-        <Text style={{ fontSize: 15, color: 'white' }}>Manually Enter Food</Text>
-      </Pressable>
-      <Pressable onPress={onPressBack} style={styles.button}>
-        <Text style={{ fontSize: 15, color: 'white' }}>BACK</Text>
-      </Pressable>
-
-    </View>
-  )
-}
-
 // MANUALLY ADD FOOD
 const AddFood = (props) => {
+
+  const today = new Date();
+
+  const startDate = getFormatedDate(today.setDate(today.getDate() + 1), 'YYYY/MM/DD')
+
+  const [open, setOpen] = React.useState(false)
+  const [date, setDate] = React.useState('')
+
+  // OPENS UP CALENDAR
+  function handleOnPress () {
+    setOpen(!open)
+  }
+
+  function handleChange (propDate) {
+    setDate(propDate)
+  }
 
   // DROPDOWN MENU CONST (1 - for dropdown menu, 2 - for API call, 3 - for getting the standard unit)
   const [getSelected, setSelected] = React.useState("");
@@ -227,11 +212,6 @@ const AddFood = (props) => {
 
   // QUANTITY CONST
   const [getQuantity, setQuantity] = React.useState("");
-
-  // DATE CONST
-  const [getDay, setDay] = React.useState('01');
-  const [getMonth, setMonth] = React.useState('01');
-  const [getYear, setYear] = React.useState("");
 
   // DROPDOWN MENU DATA
   React.useEffect(() => {
@@ -262,182 +242,11 @@ const AddFood = (props) => {
     //})
   },[])
 
-  const monthData = [
-    {key:'01',value:'01'},
-    {key:'02',value:'02'},
-    {key:'03',value:'03'},
-    {key:'04',value:'04'},
-    {key:'05',value:'05'},
-    {key:'06',value:'06'},
-    {key:'07',value:'07'},
-    {key:'08',value:'08'},
-    {key:'09',value:'09'},
-    {key:'10',value:'10'},
-    {key:'11',value:'11'},
-    {key:'12',value:'12'},
-  ]
-
-  const dayDataOne = [
-    {key:'01',value:'01'},
-    {key:'02',value:'02'},
-    {key:'03',value:'03'},
-    {key:'04',value:'04'},
-    {key:'05',value:'05'},
-    {key:'06',value:'06'},
-    {key:'07',value:'07'},
-    {key:'08',value:'08'},
-    {key:'09',value:'09'},
-    {key:'10',value:'10'},
-    {key:'11',value:'11'},
-    {key:'12',value:'12'},
-    {key:'13',value:'13'},
-    {key:'14',value:'14'},
-    {key:'15',value:'15'},
-    {key:'16',value:'16'},
-    {key:'17',value:'17'},
-    {key:'18',value:'18'},
-    {key:'19',value:'19'},
-    {key:'20',value:'20'},
-    {key:'21',value:'21'},
-    {key:'22',value:'22'},
-    {key:'23',value:'23'},
-    {key:'24',value:'24'},
-    {key:'25',value:'25'},
-    {key:'26',value:'26'},
-    {key:'27',value:'27'},
-    {key:'28',value:'28'},
-    {key:'29',value:'29'},
-    {key:'30',value:'30'},
-    {key:'31',value:'31'},
-  ]
-
-  const dayDataTwo = [
-    {key:'01',value:'01'},
-    {key:'02',value:'02'},
-    {key:'03',value:'03'},
-    {key:'04',value:'04'},
-    {key:'05',value:'05'},
-    {key:'06',value:'06'},
-    {key:'07',value:'07'},
-    {key:'08',value:'08'},
-    {key:'09',value:'09'},
-    {key:'10',value:'10'},
-    {key:'11',value:'11'},
-    {key:'12',value:'12'},
-    {key:'13',value:'13'},
-    {key:'14',value:'14'},
-    {key:'15',value:'15'},
-    {key:'16',value:'16'},
-    {key:'17',value:'17'},
-    {key:'18',value:'18'},
-    {key:'19',value:'19'},
-    {key:'20',value:'20'},
-    {key:'21',value:'21'},
-    {key:'22',value:'22'},
-    {key:'23',value:'23'},
-    {key:'24',value:'24'},
-    {key:'25',value:'25'},
-    {key:'26',value:'26'},
-    {key:'27',value:'27'},
-    {key:'28',value:'28'},
-    {key:'29',value:'29'},
-    {key:'30',value:'30'},
-  ]
-
-  const dayDataThree = [
-    {key:'01',value:'01'},
-    {key:'02',value:'02'},
-    {key:'03',value:'03'},
-    {key:'04',value:'04'},
-    {key:'05',value:'05'},
-    {key:'06',value:'06'},
-    {key:'07',value:'07'},
-    {key:'08',value:'08'},
-    {key:'09',value:'09'},
-    {key:'10',value:'10'},
-    {key:'11',value:'11'},
-    {key:'12',value:'12'},
-    {key:'13',value:'13'},
-    {key:'14',value:'14'},
-    {key:'15',value:'15'},
-    {key:'16',value:'16'},
-    {key:'17',value:'17'},
-    {key:'18',value:'18'},
-    {key:'19',value:'19'},
-    {key:'20',value:'20'},
-    {key:'21',value:'21'},
-    {key:'22',value:'22'},
-    {key:'23',value:'23'},
-    {key:'24',value:'24'},
-    {key:'25',value:'25'},
-    {key:'26',value:'26'},
-    {key:'27',value:'27'},
-    {key:'28',value:'28'},
-  ]
-
-  const yearData = [
-    {key:'2023',value:'2023'},
-    {key:'2024',value:'2024'},
-    {key:'2025',value:'2025'},
-  ]
-
   const onPressBack = () => {
-    props.navigation.navigate('BarcodeOrManual');
+    props.navigation.navigate('Main');
   }
 
-  // CHOOSES THE CORRECT DAYS IN A MONTH
-  const ChooseDate = () => {
-
-    let chooseMonthComponent;
-
-    if (getMonth == '01' || getMonth == '03' || getMonth == '05' || getMonth == '07' || getMonth == '08' || getMonth == '10' || getMonth == '12') {
-      chooseMonthComponent =  <SelectList
-                                data={dayDataOne}
-                                //onSelect={() => alert(getDay)}
-                                // setSelected={setSelected}
-                                setSelected={(val) => setDay(val)}
-                                dropdownItemStyles={{marginHorizontal:10}}
-                                dropdownTextStyles={{color:'black'}}
-                                placeholder=" "
-                                maxHeight={100}
-                              />
-    }
-
-    if (getMonth == '04' || getMonth == '06' || getMonth == '09' || getMonth == '11') {
-      chooseMonthComponent =  <SelectList
-                                data={dayDataTwo}
-                                // onSelect={() => alert(selected)}
-                                // setSelected={setSelected}
-                                setSelected={(val) => setDay(val)}
-                                dropdownItemStyles={{marginHorizontal:10}}
-                                dropdownTextStyles={{color:'black'}}
-                                placeholder=" "
-                                maxHeight={100}
-                              />
-    }
-
-    if (getMonth == '02') {
-      chooseMonthComponent =  <SelectList
-                                data={dayDataThree}
-                                // onSelect={() => alert(selected)}
-                                // setSelected={setSelected}
-                                setSelected={(val) => setDay(val)}
-                                dropdownItemStyles={{marginHorizontal:10}}
-                                dropdownTextStyles={{color:'black'}}
-                                placeholder=" "
-                                maxHeight={100}
-                              />
-    }
-
-    return (
-      <View>
-        {chooseMonthComponent}
-      </View>
-    )
-
-  }
-
-  const concatDate = getYear + getDay + getMonth;
+  const concatDate = date.slice(0,4) + date.slice(5,7) + date.slice(8);
 
   // ASYNC COMPONENT TO POST DATA TO API  
   const storeData = async () => {
@@ -452,7 +261,7 @@ const AddFood = (props) => {
           ingredientID: getSelected,
           quantity: getQuantity,
           dateExpiry: concatDate,
-          frozen: 1
+          frozen: 0
         })
       })
       .then(response => response.json())
@@ -487,7 +296,7 @@ const AddFood = (props) => {
 
   // VALIDATION AND PASS DATA TO DATABASE
   const showAlert = () => {
-    if (getSelected && getQuantity && getDay && getMonth && getYear) {
+    if (getSelected && getQuantity && date) {
 
       Alert.alert (
         "Food entered successfully"
@@ -536,40 +345,32 @@ const AddFood = (props) => {
       {/* DATE */}
       <Text style={{ marginTop: 9, marginBottom: 3, fontWeight: 'bold' }}>Use by date:</Text>
       <View style={{ flexDirection: "row" }}>
-        {/* <ChooseDate /> */}
-        <SelectList
-          data={dayDataOne}
-          //onSelect={() => alert(getDay)}
-          // setSelected={setSelected}
-          setSelected={(val) => setDay(val)}
-          dropdownItemStyles={{marginHorizontal:10}}
-          dropdownTextStyles={{color:'black'}}
-          placeholder=" "
-          maxHeight={100}
-        />
-        <Text style={{ alignSelf: 'center', marginHorizontal: 6 }}>DD /</Text>
-        <SelectList
-          data={monthData}
-          // onSelect={() => alert(selected)}
-          // setSelected={setSelected}
-          setSelected={(val) => setMonth(val)}
-          dropdownItemStyles={{marginHorizontal:10}}
-          dropdownTextStyles={{color:'black'}}
-          placeholder=" "
-          maxHeight={100}
-        />
-        <Text style={{ alignSelf: 'center', marginHorizontal: 6 }}>MM /</Text>
-        <SelectList
-          data={yearData}
-          // onSelect={() => alert(selected)}
-          // setSelected={setSelected}
-          setSelected={(val) => setYear(val)}
-          dropdownItemStyles={{marginHorizontal:10}}
-          dropdownTextStyles={{color:'black'}}
-          placeholder=" "
-          maxHeight={100}
-        />
-        <Text style={{ alignSelf: 'center', marginHorizontal: 6 }}>YY</Text>
+        <TouchableOpacity onPress={handleOnPress} style={{ marginBottom: 10, borderBottomWidth: 1, borderBottomColor: 'gray', width: '50%' }}>
+          <Text>Select Date</Text>
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={open}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+
+              <DatePicker
+                mode='calendar'
+                minimumDate={startDate}
+                selected={date}
+
+                onDateChange={handleChange}
+              />
+
+              <TouchableOpacity onPress={handleOnPress}>
+                <Text>Save</Text>
+              </TouchableOpacity>
+
+            </View>
+          </View>
+        </Modal>
       </View>
 
       <Pressable onPress={showAlert} style={styles.button}>
@@ -604,7 +405,6 @@ const Pantry = () => {
 
       <Stack.Screen name="Main" component={Main} />
       <Stack.Screen name="AddFood" component={AddFood} />
-      <Stack.Screen name="BarcodeOrManual" component={BarcodeOrManual} />
 
     </Stack.Navigator>
   );
@@ -650,6 +450,30 @@ const styles = StyleSheet.create({
     minWidth: 60,
     marginRight: 12,
     borderRadius: 9,
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    width: '90%',
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 
   // bottomButton: {
