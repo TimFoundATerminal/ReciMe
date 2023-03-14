@@ -95,13 +95,13 @@ class Main extends Component {
       const Item = ({ name, quantity, standardUnit, itemID, frozen, ingredientID, dateExpiry }) => {
 
         let frozenButton;
-        let freezeText;
+        let updatedExpiry;
         if (frozen) {
-          freezeText = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Frozen</Text>
+          updatedExpiry = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Frozen</Text>
           frozenButton = <Text style={{ fontSize: 15, color: 'white' }}>Unfreeze</Text>
           frozen = 0;
         } else {
-          freezeText = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Not Frozen</Text>
+          updatedExpiry = <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Use by Date: {dateExpiry.toString().slice(0,4)}/{dateExpiry.toString().slice(4,6)}/{dateExpiry.toString().slice(6)}</Text>
           frozenButton = <Text style={{ fontSize: 15, color: 'white' }}>Freeze</Text>
           frozen = 1;
         }
@@ -110,7 +110,7 @@ class Main extends Component {
           <View style={{ paddingVertical: 4, margin: 5, backgroundColor: "#fff" }}>
             <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>{name}</Text>
             <Text style={{ textAlign:'center', paddingVertical: 10, paddingHorizontal: 60 }}>Quantity: {quantity} {standardUnit}</Text>
-            {freezeText}
+            {updatedExpiry}
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <Pressable onPress={() => this.deleteItemByID(itemID)} color='#056835' style={styles.button}>
                   <Text style={{ fontSize: 15, color: 'white' }}>-</Text>
