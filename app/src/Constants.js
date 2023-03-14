@@ -24,11 +24,6 @@ export function getInstructionsCall(recipeId) {
   return `${SPOONACULAR_BASE_URL}/${recipeId}/analyzedInstructions?apiKey=${API_KEY}&stepBreakdown=true`
 }
 
-export function getIngredientsPicture (recipeId) {
-  return `${SPOONACULAR_BASE_URL}/${recipeId}/ingredientWidget.png?apiKey=${API_KEY}`
+export function getNutrition(recipeId) {
+  return `${SPOONACULAR_BASE_URL}/${recipeId}/nutritionWidget.json?apiKey=${API_KEY}`
 }
-
-// export function getInstructionEquipmentImage (recipeId, imageName) {
-//   console.warn(`${SPOONACULAR_BASE_URL}/${recipeId}/${imageName}?apiKey=${API_KEY}`)
-//   return `${SPOONACULAR_BASE_URL}/${recipeId}/${imageName}?apiKey=${API_KEY}`
-// }
