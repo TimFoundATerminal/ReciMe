@@ -16,6 +16,8 @@ const API_KEY = '54385497726e4c6b9dba6f8704f480c3'
 export const API_BASE_URL = `${cloud_server}/api/`
 export const SPOONACULAR_BASE_URL = "https://api.spoonacular.com/recipes"
 
+export const API_FIXED_URL = 'https://server-eemxqqdgca-nw.a.run.app/api/'
+
 export function getRecipesCall(ingredients, numberRecipes = 5) {
     return `${SPOONACULAR_BASE_URL}/findByIngredients?apiKey=${API_KEY}&ingredients=${ingredients}&number=${numberRecipes}&ranking=2`;
 }
