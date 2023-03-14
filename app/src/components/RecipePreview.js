@@ -2,21 +2,16 @@ import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
-  ScrollView,
   Image,
-  StyleSheet,
   Modal,
   Pressable,
-  ImageBackground,
-  TouchableOpacity,
-  Button,
   FlatList,
 } from "react-native";
 import { Slider } from "@miblanchard/react-native-slider";
 import tw from "twrnc";
 import { useNavigation } from '@react-navigation/native';
+import { getNutrition } from "../Constants";
 
-  
 
 export default function RecipePreview({
   recipe,
@@ -26,14 +21,58 @@ export default function RecipePreview({
   idx
 }) {
 
-  const ingredients = recipe.missedIngredients.concat(recipe.usedIngredients).map(ingredient => ({
-    key: ingredient.original}
-    ) )
+  const missedIngredients = recipe.missedIngredients.map(ingredient => ({
+    key: ingredient.original,
+    id: ingredient.id
+  }))
+
+  const usedIngredients = recipe.usedIngredients.map(ingredient => ({
+    key: ingredient.original,
+    id: ingredient.id
+  }))
 
   const navigation = useNavigation();
 
   const [portionSize, setPortionSize] = useState(1);
   const [macrosVisible, setMacrosVisible] = useState(false);
+  const [macros, setMacros] = useState([]);
+
+  const nutritionAPICallURL = getNutrition(recipe.id)
+
+  const use_backup_data = true
+
+  useEffect(() => {
+
+    // if (macrosVisible) {
+
+    // get recipes
+    fetch(use_backup_data ? nutritionAPICallURL : '')
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        return response.text().then(text => { throw new Error(text) })
+      })
+      .catch((error) => {
+        console.warn('Warning:', error, 'from', spoonacularAPICallURL)
+
+        var backupNutrition = require('../screens/backup-data/backup-nutrition.json')
+        return backupNutrition
+      })
+      .then(nutrition => {
+        setMacros(
+          nutrition.bad.slice(0, 6).map((macro, idx) =>
+            <Text style={tw`py-1`} key={idx}>
+              {macro.title}: {macro.amount}
+            </Text>
+          )
+        )
+
+      })
+    // }
+
+  }, [])
+
 
   return (
     <Modal animationType="slide" transparent={true} visible={idx === modalVisible}>
@@ -53,18 +92,18 @@ export default function RecipePreview({
             minimumValue={1}
             step={1}
             trackStyle={tw`bg-green-400`}
-            thumbStyle={tw`bg-green-400 w-8 h-8 rounded-full`}
+            thumbStyle={tw`bg-green-400 w-5 h-5 rounded-full`}
             minimumTrackTintColor={tw`bg-green-400`}
             maximumValue={5}
             onValueChange={(value) => setPortionSize(value)}
           />
-          <Text style={tw`text-center text-lg p-2`}>
+          <Text style={tw`text-center text-lg p-1`}>
             {portionSize} Portion(s)
           </Text>
         </View>
 
         <Pressable
-          style={tw`w-3/4 mx-auto h-12 bg-neutral-300 justify-center items-center`}
+          style={tw`w-3/4 mx-auto h-10 bg-neutral-300 justify-center items-center`}
           onPress={() => setMacrosVisible(!macrosVisible)}
         >
           <Text style={tw`text-lg`}>View Macros</Text>
@@ -72,17 +111,19 @@ export default function RecipePreview({
         {macrosVisible && (
           <View
             visible={macrosVisible}
-            style={tw`w-3/4 mx-auto h-40 bg-neutral-300 justify-center items-center`}
+            style={tw`flex w-3/4 mx-auto h-40 bg-neutral-300 gap-10 items-center`}
           >
-            <Text>MACROS CONTENT HERE</Text>
+            {macros}
           </View>
         )}
 
-        <View style={tw`flex-row p-8`}>
+        <View style={tw`p-8`}>
+        {/* Used Ingredients */}
           <View style={tw`flex m-auto`}>
-            <Text style={tw`text-lg pb-2 text-center`}>Ingredients</Text>
+            <Text style={tw`text-lg pb-2 text-center`}>Used Ingredients:</Text>
             <FlatList
-              data={ ingredients }
+              data={usedIngredients}
+              keyExtractor={item => item.id}
               renderItem={({ item }) => {
                 return (
                   <View style={{ marginBottom: 10 }}>
@@ -91,8 +132,21 @@ export default function RecipePreview({
                 );
               }}
             />
+
+            <Text style={tw`text-lg pb-2 text-center pt-2`}>Missed Ingredients:</Text>
+            <FlatList
+              data={missedIngredients}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => {
+                return (
+                  <View style={{ marginBottom: 10 }} key={item.id}>
+                    <Text style={{ fontSize: 16 }}>- {item.key}</Text>
+                  </View>
+                );
+              }}
+            />
           </View>
-          <View style={tw`flex m-auto`}>
+          {/* <View style={tw`flex m-auto`}>
             <Text style={tw`text-lg pb-2 text-center`}>Cookware</Text>
             <FlatList
               data={[
@@ -108,7 +162,7 @@ export default function RecipePreview({
                 );
               }}
             />
-          </View>
+          </View> */}
         </View>
         <Pressable
           title=""

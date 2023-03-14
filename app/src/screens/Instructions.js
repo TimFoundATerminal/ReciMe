@@ -101,11 +101,7 @@ export default function Instructions({ navigation, route }) {
 
         <View style={tw`flex px-3 py-3`}>
 
-            {() => {
-                if (error != null) {
-                    return <Alert><Text>{error}</Text></Alert>
-                }
-            }}
+            {error && <Alert><Text>{error}</Text></Alert>}
 
             {/* Title */}
             <Text style={tw`text-[16px] mb-0 font-bold my-2`}>

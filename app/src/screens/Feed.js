@@ -97,10 +97,10 @@ export default function Feed({ navigation, route }) {
         {!loading ?? <Text>Loading...</Text>}
 
         {recipes.map((recipe, idx) => (
-          <View key={ idx } style={tw`relative p-4`}>
+          <View key={idx} style={tw`relative p-4`}>
 
             <RecipePreview
-              idx = { idx }
+              idx={idx}
               recipe={recipe}
               pantry={pantry}
               setModalVisible={setModalVisible}
@@ -121,17 +121,16 @@ export default function Feed({ navigation, route }) {
                 <View
                   style={tw`absolute items-end justify-end right-4 w-full h-full`}
                 >
-                  <Text style={tw`text-white`}>30 mins</Text>
+                  <Text style={tw`text-white`}>
+                    You have {recipe.usedIngredients.length} of {recipe.missedIngredients.length + recipe.usedIngredients.length} ingredients
+                  </Text>
                 </View>
-                <View
-                  style={tw`absolute items-center justify-end bottom-2 w-full h-full`}
-                >
-                  <Text style={tw`text-white`}>488 calories</Text>
-                </View>
+
                 <View
                   style={tw`absolute items-start justify-end left-4 w-full h-full`}
                 >
-                  <Text style={tw`text-white`}>0.4kg</Text>
+
+                  <Text style={tw`text-white`}></Text>
                 </View>
               </View>
             </TouchableOpacity>
