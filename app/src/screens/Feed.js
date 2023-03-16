@@ -30,7 +30,7 @@ export default function Feed({ navigation, route }) {
   const use_backup_data = true
 
   useEffect(() => {
-
+    const focusHandler = navigation.addListener('focus', () => {
     if (loading) {
 
       // get pantry
@@ -74,7 +74,7 @@ export default function Feed({ navigation, route }) {
             })
         })
     }
-  }, [])
+  })});
 
   return (
     <View>
