@@ -1,30 +1,29 @@
-const db = require('./db');
+const db = require('./db')
 
-function getAll() {
-    const data = db.query('SELECT * FROM ingredients', []);
-    return data;
+async function getAll () {
+  const data = await db.query('SELECT * FROM ingredients', [])
+  return data
 }
 
-function getIngredient(id) {
-    const data = db.queryRow('SELECT * FROM ingredients WHERE ingredientID = ?', id)
-    return data
+async function getIngredient (id) {
+  const data = await db.queryRow('SELECT * FROM ingredients WHERE ingredientID = ?', [id])
+  return data
 }
 
-function createIngredient(ingredientObj) {
-    const result = db.run('INSERT INTO ingredients (name, standardUnit, carbonPerUnit) VALUES \
-    (@name, @standardUnit, @carbonPerUnit)', ingredientObj);
-    return {message:db.validateChanges(result,'Ingredient created successfully','Error in creating ingredient')};
+async function createIngredient (ingredientObj) {
+  const result = await db.run('INSERT INTO ingredients (name, standardUnit, carbonPerUnit) VALUES (?, ?, ?)', Object.values(ingredientObj))
+  return { message: db.validateChanges(result, 'Ingredient created successfully', 'Error in creating ingredient') }
 }
 
-function deleteIngredient(id) {
-    const result = db.run(
-        'DELETE FROM ingredients WHERE ingredientID = @id', {id: id});      
-    return {message:db.validateChanges(result, 'ingredient deleted successfully', 'Error deleting ingredient')};
+async function deleteIngredient (id) {
+  const result = await db.run(
+    'DELETE FROM ingredients WHERE ingredientID = ?', [id])
+  return { message: db.validateChanges(result, 'ingredient deleted successfully', 'Error deleting ingredient') }
 }
 
 module.exports = {
-    getAll, 
-    createIngredient,
-    deleteIngredient,
-    getIngredient
+  getAll,
+  createIngredient,
+  deleteIngredient,
+  getIngredient
 }
